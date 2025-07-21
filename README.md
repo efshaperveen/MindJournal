@@ -56,7 +56,6 @@ cd <repo-name>
 ### 3️⃣ Install Dependencies
 Make sure **Node.js** is installed on your machine. Then install the project dependencies using the following command:
 
-```bash
 npm install
 
 ### 4️⃣ Create a New Branch
@@ -72,25 +71,20 @@ git checkout -b feature/your-feature-name
 - Add comments where necessary to improve code readability.
 - If you're adding a new feature, make sure it's modular and reusable.
 
----
-
 ### 6️⃣ Test Your Changes
 Run the project locally to ensure everything is working as expected:
 
-```bash
 npm run dev
 
 ### 7️⃣ Commit Your Changes
 After making and testing your changes, stage and commit them with a clear and meaningful commit message:
 
-```bash
 git add .
 git commit -m "feat: add responsive navbar"
 
 ### 8️⃣ Push to GitHub
 After committing your changes, push your branch to your forked GitHub repository using the following command:
 
-```bash
 git push origin feature/your-feature-name
 
 ### 9️⃣ Create a Pull Request
