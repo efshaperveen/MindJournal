@@ -1,5 +1,6 @@
 import { FiSmile, FiMeh, FiFrown } from 'react-icons/fi'
 
+
 const MoodIcon = ({ mood, size = 16 }) => {
   switch (mood) {
     case 'great':
