@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { FiUser, FiMail, FiLock } from 'react-icons/fi'
+import axios from 'axios'
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -10,28 +11,48 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   })
+  const [otp, setOtp] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
+  const [otpVerified, setOtpVerified] = useState(false)
+
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  
   const { register } = useAuth()
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    // Validate form
-    if (formData.password !== formData.confirmPassword) {
-      return setError('Passwords do not match')
+
+  const sendOtp = async () => {
+    try {
+      setError('')
+      await axios.post('http://localhost:5000/send-otp', { email: formData.email })
+      setOtpSent(true)
+    } catch (err) {
+      setError('Failed to send OTP. Please try again.')
     }
-    
-    if (formData.password.length < 6) {
-      return setError('Password must be at least 6 characters')
+  }
+
+  const verifyOtp = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/verify-otp', {
+        email: formData.email,
+        otp
+      })
+
+      if (response.data.verified) {
+        setOtpVerified(true)
+        handleFinalSubmit()
+      } else {
+        setError('Invalid OTP')
+      }
+    } catch {
+      setError('OTP verification failed')
     }
-    
+  }
+
+  const handleFinalSubmit = async () => {
     try {
       setError('')
       setLoading(true)
@@ -42,20 +63,41 @@ const Register = () => {
       setLoading(false)
     }
   }
-  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (formData.password !== formData.confirmPassword) {
+      return setError('Passwords do not match')
+    }
+
+    if (formData.password.length < 6) {
+      return setError('Password must be at least 6 characters')
+    }
+
+    if (!otpSent) {
+      await sendOtp()
+      return
+    }
+
+    if (!otpVerified) {
+      return // wait for OTP input and verification
+    }
+  }
+
   return (
     <div className="card p-6 w-full animate-fadeIn">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Create Account</h1>
         <p className="text-neutral-600 dark:text-neutral-400">Join MindJournal to start your journal</p>
       </div>
-      
+
       {error && (
         <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg text-sm">
           {error}
         </div>
       )}
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
@@ -77,7 +119,7 @@ const Register = () => {
             />
           </div>
         </div>
-        
+
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
             Email
@@ -98,7 +140,7 @@ const Register = () => {
             />
           </div>
         </div>
-        
+
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
             Password
@@ -119,7 +161,7 @@ const Register = () => {
             />
           </div>
         </div>
-        
+
         <div>
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
             Confirm Password
@@ -140,16 +182,40 @@ const Register = () => {
             />
           </div>
         </div>
-        
+
+        {otpSent && !otpVerified && (
+          <div>
+            <label htmlFor="otp" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              Enter OTP
+            </label>
+            <input
+              id="otp"
+              name="otp"
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="input"
+              placeholder="Enter OTP sent to email"
+            />
+            <button
+              type="button"
+              onClick={verifyOtp}
+              className="btn btn-secondary mt-2 w-full"
+            >
+              Verify OTP
+            </button>
+          </div>
+        )}
+
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || otpSent && !otpVerified}
           className="btn btn-primary w-full"
         >
-          {loading ? 'Creating account...' : 'Create account'}
+          {loading ? 'Creating account...' : otpSent ? 'Verify OTP to complete' : 'Create account'}
         </button>
       </form>
-      
+
       <div className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
         Already have an account?{' '}
         <Link to="/login" className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500">

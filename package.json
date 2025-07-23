@@ -4,20 +4,26 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+  "dev": "concurrently \"vite\" \"node backend/server.js\"",
+  "build": "vite build",
+  "lint": "eslint .",
+  "preview": "vite preview"
+},
   "dependencies": {
+    "axios": "^1.11.0",
+    "body-parser": "^2.2.0",
     "chart.js": "^4.4.1",
+    "cors": "^2.8.5",
     "date-fns": "^3.6.0",
+    "express": "^5.1.0",
     "framer-motion": "^12.23.6",
+    "nodemailer": "^7.0.5",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-icons": "^5.0.1",
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "resend": "^4.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
@@ -25,6 +31,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.18",
+    "concurrently": "^9.2.0",
     "eslint": "^9.9.1",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
@@ -33,5 +40,10 @@
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "vite": "^5.4.2"
-  }
+  },
+  "description": "**MindJournal** is a fully responsive and modern web application built with **React.js** and **Vite**, designed to help users log their thoughts, track daily moods, and gain insights into their mental well-being.",
+  "main": "eslint.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
