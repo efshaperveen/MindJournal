@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Moon+Dance&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -43,3 +44,10 @@
     @apply bg-white dark:bg-neutral-800 rounded-lg shadow-soft dark:shadow-none border border-neutral-200 dark:border-neutral-700;
   }
 }
+.moon-dance-regular {
+  font-family: "Moon Dance", cursive;
+  font-weight: 600;
+  font-style: normal;
+}
+
+

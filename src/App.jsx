@@ -19,8 +19,6 @@ import Settings from './pages/Settings'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import NotFound from './pages/NotFound'
-
-// Protected route component
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth()
   
@@ -69,6 +67,7 @@ function App() {
       {/* 404 route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+ 
   )
 }
 
