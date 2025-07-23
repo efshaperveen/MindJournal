@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import RecentEntries from "../components/dashboard/RecentEntries";
 import MoodTracker from "../components/dashboard/MoodTracker";
 import MoodChart from "../components/dashboard/MoodChart";
+import AffirmationBanner from "../components/dashboard/AffirmationBanner";
 import { format } from "date-fns";
 
 const Dashboard = () => {
@@ -41,9 +42,11 @@ const Dashboard = () => {
         </p>
       </div>
 
+      <AffirmationBanner />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="card p-6 bg-gradient-to-br from-primary-500 to-primary-600 text-white">
-          <h2 className="text-xl font-semibold mb-2">Your Journall Status</h2>
+          <h2 className="text-xl font-semibold mb-2">Your Journal Status</h2>
           <div className="flex flex-col space-y-1">
             <div className="flex justify-between">
               <span>Total entries:</span>
