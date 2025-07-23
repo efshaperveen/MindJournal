@@ -5,10 +5,10 @@ import MoodIcon from '../journal/MoodIcon'
 
 const RecentEntries = () => {
   const { entries } = useJournal()
-  
+
   // Get the 5 most recent entries
   const recentEntries = entries.slice(0, 5)
-  
+
   if (entries.length === 0) {
     return (
       <div className="card p-4">
@@ -22,7 +22,7 @@ const RecentEntries = () => {
       </div>
     )
   }
-  
+
   return (
     <div className="card">
       <div className="flex justify-between items-center px-4 pt-4 pb-2">
@@ -31,34 +31,35 @@ const RecentEntries = () => {
           View all
         </Link>
       </div>
-      
+
       <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
         {recentEntries.map(entry => (
           <Link
             key={entry.id}
             to={`/journal/${entry.id}`}
-            className="block px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors"
+            className="block px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
           >
             <div className="flex justify-between">
-              <h3 className="font-medium text-neutral-800 dark:text-white mb-1 truncate pr-4">
+              <h3 className="font-medium text-neutral-800 dark:text-neutral-100 mb-1 truncate pr-4">
                 {entry.title}
               </h3>
               <MoodIcon mood={entry.mood} />
             </div>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">
+            <p className="text-sm text-neutral-500 dark:text-neutral-300 mb-1">
               {format(new Date(entry.createdAt), 'PPP')}
             </p>
-            <p className="text-neutral-600 dark:text-neutral-300 text-sm line-clamp-1">
+            <p className="text-neutral-600 dark:text-neutral-200 text-sm line-clamp-1">
               {entry.content}
             </p>
           </Link>
         ))}
+
       </div>
-      
+
       {entries.length > 0 && (
         <div className="p-4 border-t border-neutral-200 dark:border-neutral-700">
-          <Link 
-            to="/journal/new" 
+          <Link
+            to="/journal/new"
             className="btn btn-primary w-full"
           >
             New Journal Entry
