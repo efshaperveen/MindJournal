@@ -39,4 +39,11 @@
 - **Charts**: Recharts  
 - **Icons**: React Icons
 
+---
 
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).  
+You’re free to use, modify, and share this software under the license terms.
+
+---
