@@ -19,6 +19,8 @@ import Settings from './pages/Settings'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import NotFound from './pages/NotFound'
+import MindChat from './pages/MindChat'
+
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth()
   
@@ -62,6 +64,7 @@ function App() {
         <Route path="calendar" element={<Calendar />} />
         <Route path="stats" element={<Stats />} />
         <Route path="settings" element={<Settings />} />
+        <Route path='mindchat' element={<MindChat/>}/>
       </Route>
       
       {/* 404 route */}

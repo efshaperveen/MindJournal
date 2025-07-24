@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useTheme } from '../../contexts/ThemeContext'
-import { FiHome, FiBook, FiCalendar, FiPieChart, FiSettings, FiLogOut } from 'react-icons/fi'
+import { FiHome, FiBook, FiCalendar, FiPieChart, FiSettings, FiLogOut,FiMessageCircle } from 'react-icons/fi'
 import ThemeToggle from '../common/ThemeToggle'
 
 const Sidebar = () => {
@@ -12,7 +12,9 @@ const Sidebar = () => {
     { name: 'Journal', path: '/journal', icon: <FiBook size={20} /> },
     { name: 'Calendar', path: '/calendar', icon: <FiCalendar size={20} /> },
     { name: 'Insights', path: '/stats', icon: <FiPieChart size={20} /> },
-    { name: 'Settings', path: '/settings', icon: <FiSettings size={20} /> }
+    { name: 'Settings', path: '/settings', icon: <FiSettings size={20} /> },
+    { name: 'MindBot-AI', path: '/mindchat', icon: <FiMessageCircle  size={20} /> }
+
   ]
   
   const activeClass = "bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200"
