@@ -242,9 +242,9 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
     e.preventDefault();
     setIsSubmitting(true); // Set loading state
 
-    // Cloudinary credentials provided by the user
-    const CLOUD_NAME = "dcs4tkn8t";
-    const UPLOAD_PRESET = "MindJournal";
+    // Cloudinary credentials 
+    const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
+    const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
 
     // Separate existing image URLs from new image files
     const existingImageUrls = entryData.images.filter(image => typeof image === 'string');
