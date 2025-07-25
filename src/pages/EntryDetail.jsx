@@ -120,6 +120,25 @@ const EntryDetail = () => {
               {entry.content}
             </p>
           </div>
+
+          {entry.images && entry.images.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Attachments:
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {entry.images.map((image, index) => (
+                  <a key={index} href={image} target="_blank" rel="noopener noreferrer">
+                    <img 
+                      src={image} 
+                      alt={`Journal entry image ${index + 1}`}
+                      className="rounded-lg object-cover h-40 w-full hover:opacity-90 transition-opacity"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
