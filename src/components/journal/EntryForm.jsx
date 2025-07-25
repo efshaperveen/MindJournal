@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, Smile, Meh, Frown, UploadCloud, XCircle, Loader2 } from 'lucide-react'; // Switched to lucide-react for different icons
+import { Check, Smile, Meh, Frown, UploadCloud, XCircle, Loader2, Trash2 } from 'lucide-react'; // Added Trash2 icon
 
 // Define mood options with updated colors and lucide-react icons
 const moods = [
@@ -10,9 +10,49 @@ const moods = [
   { id: 'awful', label: 'Awful', icon: <Frown className="text-red-500" size={24} />, color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200' }
 ];
 
+// --- API Utility Functions (Placeholder - you might put these in a separate file like `api.js`) ---
+// NOTE: Replace 'YOUR_BACKEND_URL' with the actual URL of your Express backend (e.g., 'http://localhost:5000')
+const API_BASE_URL = 'http://localhost:5000/api/custom-activities'; // Assuming your backend runs on port 5000
+
+const fetchCustomActivities = async (userEmail) => {
+  const response = await fetch(`${API_BASE_URL}/${userEmail}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch custom activities');
+  }
+  return response.json();
+};
+
+const addCustomActivityToBackend = async (userEmail, activity) => {
+  const response = await fetch(API_BASE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: userEmail, activity })
+  });
+  if (!response.ok) {
+    throw new Error('Failed to add custom activity to backend');
+  }
+  return response.json(); // Should return the updated list of activities
+};
+
+const deleteCustomActivityFromBackend = async (userEmail, activity) => {
+  const response = await fetch(API_BASE_URL, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: userEmail, activity })
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete custom activity from backend');
+  }
+  return response.json(); // Should return the updated list of activities
+};
+// --- End API Utility Functions ---
+
+
 // JournalEntryForm component for creating or editing journal entries
-const EntryForm = ({ onSubmit, initialData = {} }) => {
+// Added `userEmail` prop to link activities to a specific user
+const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
   // State to manage all form data
+  console.log('EntryForm rendered. Current userEmail:', userEmail); // Debug log 1
   const [entryData, setEntryData] = useState({
     title: '',
     content: '',
@@ -29,11 +69,54 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
   // State for loading indicator during form submission (especially image upload)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Common activities for quick selection
+  // NEW: State to store custom activities fetched from the backend
+  const [persistedCustomActivities, setPersistedCustomActivities] = useState([]);
+  // NEW: State for loading custom activities
+  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
+  // NEW: State for error fetching/adding/deleting custom activities
+  const [activityError, setActivityError] = useState(null);
+
+  // Common activities for quick selection (these are not user-specific)
   const commonActivities = [
     'Exercise', 'Reading', 'Meditation', 'Work', 'Family time',
     'Friends', 'Hobbies', 'Self-care', 'Relaxation', 'Nature'
   ];
+
+  // NEW: Effect to fetch custom activities from the backend on component mount
+  useEffect(() => {
+    console.log('useEffect for activities triggered. userEmail:', userEmail); // Debug log 2
+    const loadPersistedActivities = async () => {
+      if (!userEmail) {
+        // If no userEmail, we can't fetch user-specific activities
+        console.warn('No userEmail provided, skipping custom activity fetch.'); // Debug log 3
+        setIsLoadingActivities(false);
+        return;
+      }
+      setIsLoadingActivities(true);
+      setActivityError(null);
+      try {
+        const activities = await fetchCustomActivities(userEmail);
+        setPersistedCustomActivities(activities);
+        console.log('Fetched persisted activities:', activities); // Debug log 4
+      } catch (err) {
+        console.error('Error loading persisted activities:', err);
+        setActivityError('Failed to load your custom activities.');
+      } finally {
+        setIsLoadingActivities(false);
+      }
+    };
+
+    loadPersistedActivities();
+  }, [userEmail]); // Re-run when userEmail changes
+
+  // Combine common and persisted custom activities for display
+  // Use a Set to ensure uniqueness and then convert back to Array
+  const allAvailableActivities = Array.from(new Set([
+    ...commonActivities,
+    ...(persistedCustomActivities || [])
+  ]));
+  console.log('All available activities for display:', allAvailableActivities); // Debug log 5
+
 
   // Handles changes for text input fields (title, content)
   const handleInputChange = (e) => {
@@ -46,7 +129,7 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
     setEntryData(prev => ({ ...prev, mood: moodId }));
   };
 
-  // Toggles an activity in the activities list
+  // Toggles an activity in the activities list for the CURRENT entry
   const toggleActivitySelection = (activity) => {
     setEntryData(prev => {
       const currentActivities = prev.activities || [];
@@ -59,16 +142,62 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
     });
   };
 
-  // Adds a custom activity to the list
-  const addCustomActivity = () => {
-    if (newActivityInput.trim() && !entryData.activities.includes(newActivityInput.trim())) {
+  // NEW: Adds a custom activity to the list AND persists it to the backend
+  const addCustomActivity = async () => {
+    const activityToAdd = newActivityInput.trim();
+    if (!activityToAdd || entryData.activities.includes(activityToAdd)) {
+      return; // Don't add if empty or already selected for current entry
+    }
+
+    setIsLoadingActivities(true);
+    setActivityError(null);
+    try {
+      // Add to the current entry's selected activities
       setEntryData(prev => ({
         ...prev,
-        activities: [...(prev.activities || []), newActivityInput.trim()]
+        activities: [...(prev.activities || []), activityToAdd]
       }));
+
+      // Persist to backend
+      const updatedPersistedActivities = await addCustomActivityToBackend(userEmail, activityToAdd);
+      setPersistedCustomActivities(updatedPersistedActivities);
       setNewActivityInput(''); // Clear the input field
+    } catch (err) {
+      console.error('Error adding custom activity:', err);
+      setActivityError('Failed to save new activity.');
+      // OPTIONAL: Revert entryData.activities if backend save fails
+      setEntryData(prev => ({
+        ...prev,
+        activities: prev.activities.filter(a => a !== activityToAdd)
+      }));
+    } finally {
+      setIsLoadingActivities(false);
     }
   };
+
+  // NEW: Removes a custom activity from the persisted list in the backend
+  const removePersistedActivity = async (activityToRemove) => {
+    setIsLoadingActivities(true);
+    setActivityError(null);
+    try {
+      // Remove from the current entry's selected activities if it was selected
+      setEntryData(prev => ({
+        ...prev,
+        activities: prev.activities.filter(a => a !== activityToRemove)
+      }));
+
+      // Remove from backend
+      const updatedPersistedActivities = await deleteCustomActivityFromBackend(userEmail, activityToRemove);
+      setPersistedCustomActivities(updatedPersistedActivities);
+    } catch (err) {
+      console.error('Error deleting custom activity:', err);
+      setActivityError('Failed to delete activity.');
+      // OPTIONAL: Revert entryData.activities if backend delete fails
+    } finally {
+      setIsLoadingActivities(false);
+    }
+  };
+
 
   // Handles image file selection
   const handleImageFileChange = (e) => {
@@ -203,34 +332,41 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
         <label className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
           Activities (optional)
         </label>
-        <div className="flex flex-wrap gap-2 mb-3">
-          {commonActivities.map(activity => (
-            <button
-              key={activity}
-              type="button"
-              onClick={() => toggleActivitySelection(activity)}
-              className={`px-3 py-1.5 text-sm rounded-full transition-all duration-200 ${
-                entryData.activities?.includes(activity)
-                  ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 ring-1 ring-primary-400'
-                  : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-              }`}
-            >
-              {activity}
-            </button>
-          ))}
-
-          {/* Render custom activities already added */}
-          {entryData.activities?.filter(a => !commonActivities.includes(a)).map(activity => (
-            <button
-              key={activity}
-              type="button"
-              onClick={() => toggleActivitySelection(activity)}
-              className="bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 px-3 py-1.5 text-sm rounded-full ring-1 ring-primary-400"
-            >
-              {activity}
-            </button>
-          ))}
-        </div>
+        {isLoadingActivities ? (
+          <div className="flex items-center text-neutral-500 dark:text-neutral-400">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading activities...
+          </div>
+        ) : activityError ? (
+          <div className="text-red-500 text-sm mb-3">{activityError}</div>
+        ) : (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {allAvailableActivities.map(activity => (
+              <button
+                key={activity}
+                type="button"
+                onClick={() => toggleActivitySelection(activity)}
+                className={`px-3 py-1.5 text-sm rounded-full transition-all duration-200 ${
+                  entryData.activities?.includes(activity)
+                    ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 ring-1 ring-primary-400'
+                    : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                } flex items-center`}
+              >
+                {activity}
+                {/* Show delete button only for persisted custom activities */}
+                {persistedCustomActivities.includes(activity) && (
+                  <Trash2
+                    size={14}
+                    className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent toggling selection when clicking delete
+                      removePersistedActivity(activity);
+                    }}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Custom Activity Input */}
         <div className="flex rounded-lg shadow-sm">
@@ -245,7 +381,7 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
             type="button"
             onClick={addCustomActivity}
             className="px-4 py-2 bg-primary-600 text-white rounded-r-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!newActivityInput.trim()}
+            disabled={!newActivityInput.trim() || isLoadingActivities}
           >
             Add
           </button>
