@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mindbotRoutes from './routes/mindbot.js';
-import customActivitiesRoutes from './routes/customActivities.js'; // 👈 new import
+import customActivitiesRoutes from './routes/customActivities.js'; //  new import
 
 dotenv.config();
 console.log('MONGO_URI from .env:', process.env.MONGO_URI);

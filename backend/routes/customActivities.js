@@ -3,7 +3,7 @@ import CustomActivity from '../models/CustomActivity.js';
 
 const router = express.Router();
 
-// 🔍 GET: Fetch all custom activities for a user
+//  GET: Fetch all custom activities for a user
 router.get('/:email', async (req, res) => {
   try {
     const record = await CustomActivity.findOne({ userEmail: req.params.email });
@@ -13,7 +13,7 @@ router.get('/:email', async (req, res) => {
   }
 });
 
-// ➕ POST: Add a custom activity
+//  POST: Add a custom activity
 router.post('/', async (req, res) => {
   const { email, activity } = req.body;
 
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ❌ DELETE: Remove a custom activity
+//  DELETE: Remove a custom activity
 router.delete('/', async (req, res) => {
   const { email, activity } = req.body;
 
