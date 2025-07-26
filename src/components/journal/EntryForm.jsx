@@ -56,12 +56,15 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
     content: '',
     mood: '',
     activities: [],
-    images: [],
+    images: [], // Stores File objects for new uploads and URLs for existing images
+    micro_goals: [],
     ...initialData
   });
 
   const [newActivityInput, setNewActivityInput] = useState('');
   const [imagePreviews, setImagePreviews] = useState(initialData.images || []);
+  const [microGoalPreview, setMicroGoalPreview] = useState('');
+  // State for loading indicator during form submission (especially image upload)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // States for custom activity persistence
@@ -151,6 +154,47 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
       const updatedPersistedActivities = await addCustomActivityToBackend(userEmail, activityToAdd);
       setPersistedCustomActivities(updatedPersistedActivities);
       setNewActivityInput(''); // Clear the input field
+    }
+  };
+
+  // Adds a new goal to the list
+  const addMicroGoal = () => {
+    if (microGoalPreview.trim() && !entryData.micro_goals.includes(microGoalPreview.trim())) {
+      setEntryData(prev => ({
+        ...prev,
+        micro_goals: [
+          ...(prev.micro_goals || []),
+          {
+            text: microGoalPreview.trim(),
+            is_completed: false
+          }
+        ]
+      }));
+      setMicroGoalPreview(''); // Clear the input field
+    }
+  };
+
+  const removeMicroGoal = (index) => {
+    setEntryData(prev => {
+      const newMicroGoals = prev.micro_goals.filter((goal, i) => i !== index);
+      return { ...prev, micro_goals: newMicroGoals };
+    });
+  };
+
+  const toggleMicroGoalCompletion = (index) => {
+    setEntryData(prev => {
+      const newMicroGoals = prev.micro_goals.map((goal, i) => {
+        if (i === index) {
+          return { ...goal, is_completed: !goal.is_completed };
+        }
+        return goal;
+      });
+      return { ...prev, micro_goals: newMicroGoals };
+    });
+  };
+
+
+  // Handles image file selection
     } catch (err) {
       console.error('Error adding custom activity:', err);
       setActivityError('Failed to save new activity.');
@@ -291,11 +335,10 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
               key={mood.id}
               type="button"
               onClick={() => handleMoodSelection(mood.id)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 ease-in-out text-sm font-medium ${
-                entryData.mood === mood.id
+              className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 ease-in-out text-sm font-medium ${entryData.mood === mood.id
                   ? mood.color + ' ring-2 ring-offset-2 ring-primary-500 dark:ring-offset-neutral-900 shadow-md'
                   : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-              }`}
+                }`}
             >
               <span>{mood.icon}</span>
               <span>{mood.label}</span>
@@ -382,7 +425,7 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
             type="text"
             value={newActivityInput}
             onChange={(e) => setNewActivityInput(e.target.value)}
-            className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-l-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors duration-200"
+            className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors duration-200"
             placeholder="Add a new activity (e.g., 'Gardening')"
           />
           <button
@@ -399,6 +442,68 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
           >
             ➕ Add
           </button>
+        </div>
+      </div>
+
+      {/* micro goals section */}
+      <div>
+        <label className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
+          Goals (optional)
+        </label>
+
+        {/* Goal Input */}
+        <div className="flex rounded-lg shadow-sm">
+          <input
+            type="text"
+            value={microGoalPreview}
+            onChange={(e) => setMicroGoalPreview(e.target.value)}
+            className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 transition-colors duration-200"
+            placeholder="Add new Goal (e.g., Sleep before 11 PM, Deploy personal project to Vercel)"
+          />
+          <button
+            type="button"
+            onClick={addMicroGoal}
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!microGoalPreview.trim()}
+          >
+           ➕ Add
+          </button>
+        </div>
+
+        {/* Render micro goals already added */}
+        <div className="flex flex-col gap-2 m-3">
+          {entryData.micro_goals?.map((goal, index) => (
+            <div key={index} className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div
+                  onClick={() => toggleMicroGoalCompletion(index)}
+                  className={`w-4 h-4 cursor-pointer rounded border-2 flex items-center justify-center transition-colors duration-200 ${goal.is_completed
+                    ? 'bg-primary-600 border-primary-600 dark:bg-primary-500 dark:border-primary-500'
+                    : 'bg-white dark:bg-neutral-700 border-gray-300 dark:border-gray-500 hover:border-primary-400 dark:hover:border-primary-400'
+                    }`}
+                >
+                  {goal.is_completed && <Check strokeWidth={5} className="w-4 h-4 font-bold text-white" />}
+                </div>
+
+                <span
+                  className={`text-md ${goal.is_completed
+                    ? "line-through text-gray-400"
+                    : "text-neutral-700 dark:text-neutral-300"
+                    }`}
+
+                >
+                  {goal.text}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => removeMicroGoal(index)}
+                className="text-red-500 hover:underline"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 
