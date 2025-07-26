@@ -58,6 +58,7 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
     activities: [],
     images: [], // Stores File objects for new uploads and URLs for existing images
     micro_goals: [],
+    
     ...initialData
   });
 
@@ -339,7 +340,7 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
               className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 ease-in-out text-sm font-medium ${entryData.mood === mood.id
                   ? mood.color + ' ring-2 ring-offset-2 ring-primary-500 dark:ring-offset-neutral-900 shadow-md'
                   : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                }`}
+                  }`}
             >
               <span>{mood.icon}</span>
               <span>{mood.label}</span>
@@ -568,10 +569,10 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
           placeholder="Write your thoughts and experiences here..."
         />
 
-          <div className="mt-4 p-3 border border-neutral-300 dark:border-neutral-700 rounded-md
+         <div className="mt-4 p-3 border border-neutral-300 dark:border-neutral-700 rounded-md
       bg-neutral-50 dark:bg-neutral-900 text-sm prose dark:prose-invert max-w-none">
-        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(entryData.content || "")) }} />
-      </div>
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(entryData.content || "")) }} />
+            </div>
       </div>
 
       {/* Submit Button */}
@@ -590,8 +591,8 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
           {isSubmitting ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-                <span className="animate-pulse">
-                {initialData.id ? 'Saving...' : 'Creating...'}
+               <span className="animate-pulse">
+                  {initialData.id ? 'Saving...' : 'Creating...'}
                 </span>
             </>
           ) : (
