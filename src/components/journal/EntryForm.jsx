@@ -154,8 +154,21 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
       const updatedPersistedActivities = await addCustomActivityToBackend(userEmail, activityToAdd);
       setPersistedCustomActivities(updatedPersistedActivities);
       setNewActivityInput(''); // Clear the input field
+    } catch (err) {
+      console.error('Error adding custom activity:', err);
+      setActivityError('Failed to save new activity.');
+      // Revert entryData.activities if backend save fails
+      setEntryData(prev => ({
+        ...prev,
+        activities: prev.activities.filter(a => a !== activityToAdd)
+      }));
+    } finally {
+      setIsLoadingActivities(false);
     }
   };
+
+
+
 
   // Adds a new goal to the list
   const addMicroGoal = () => {
@@ -194,19 +207,7 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
   };
 
 
-  // Handles image file selection
-    } catch (err) {
-      console.error('Error adding custom activity:', err);
-      setActivityError('Failed to save new activity.');
-      // Revert entryData.activities if backend save fails
-      setEntryData(prev => ({
-        ...prev,
-        activities: prev.activities.filter(a => a !== activityToAdd)
-      }));
-    } finally {
-      setIsLoadingActivities(false);
-    }
-  };
+
 
   // Removes a custom activity from the persisted list in the backend
   const removePersistedActivity = async (activityToRemove) => {
