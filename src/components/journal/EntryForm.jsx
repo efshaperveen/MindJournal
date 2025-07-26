@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Check, Smile, Meh, Frown, UploadCloud, XCircle, Loader2, Trash2 } from 'lucide-react'; // Switched to lucide-react for different icons
-import { FaRunning, FaBookOpen, FaPrayingHands, FaBriefcase, FaUsers } from 'react-icons/fa';
+import { Check, Smile, Meh, Frown, UploadCloud, XCircle, Loader2, Trash2 } from 'lucide-react';
+import { FaRunning, FaBookOpen, FaPrayingHands, FaBriefcase, FaUsers, FaChild, FaHeart, FaTree, FaSun } from 'react-icons/fa'; // Added more icons for common activities
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 
@@ -13,9 +13,44 @@ const moods = [
   { id: 'awful', label: 'Awful', icon: <Frown className="text-red-500" size={24} />, color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200' }
 ];
 
-// JournalEntryForm component for creating or editing journal entries
-const EntryForm = ({ onSubmit, initialData = {} }) => {
-  // State to manage all form data
+// --- API Utility Functions ---
+const API_BASE_URL = 'http://localhost:5000/api/custom-activities';
+
+const fetchCustomActivities = async (userEmail) => {
+  const response = await fetch(`${API_BASE_URL}/${userEmail}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch custom activities');
+  }
+  return response.json();
+};
+
+const addCustomActivityToBackend = async (userEmail, activity) => {
+  const response = await fetch(API_BASE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: userEmail, activity })
+  });
+  if (!response.ok) {
+    throw new Error('Failed to add custom activity to backend');
+  }
+  return response.json();
+};
+
+const deleteCustomActivityFromBackend = async (userEmail, activity) => {
+  const response = await fetch(API_BASE_URL, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: userEmail, activity })
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete custom activity from backend');
+  }
+  return response.json();
+};
+// --- End API Utility Functions ---
+
+
+const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
   const [entryData, setEntryData] = useState({
     title: '',
     content: '',
@@ -23,27 +58,57 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
     activities: [],
     images: [], // Stores File objects for new uploads and URLs for existing images
     micro_goals: [],
+    
     ...initialData
   });
 
-  // State for custom activity input
   const [newActivityInput, setNewActivityInput] = useState('');
-  // State to store image preview URLs (for display)
   const [imagePreviews, setImagePreviews] = useState(initialData.images || []);
   const [microGoalPreview, setMicroGoalPreview] = useState('');
   // State for loading indicator during form submission (especially image upload)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Common activities for quick selection
+  // States for custom activity persistence
+  const [persistedCustomActivities, setPersistedCustomActivities] = useState([]);
+  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
+  const [activityError, setActivityError] = useState(null);
 
+  // Common activities for quick selection (now objects with label and icon)
   const commonActivities = [
     { label: 'Exercise', icon: <FaRunning className="text-red-500" /> },
     { label: 'Reading', icon: <FaBookOpen className="text-blue-500" /> },
     { label: 'Meditation', icon: <FaPrayingHands className="text-purple-500" /> },
     { label: 'Work', icon: <FaBriefcase className="text-yellow-500" /> },
-    { label: 'Family', icon: <FaUsers className="text-green-500" /> }
+    { label: 'Family time', icon: <FaUsers className="text-green-500" /> },
+    { label: 'Friends', icon: <FaChild className="text-pink-500" /> },
+    { label: 'Hobbies', icon: <FaHeart className="text-orange-500" /> },
+    { label: 'Self-care', icon: <FaSun className="text-indigo-500" /> },
+    { label: 'Relaxation', icon: <Smile className="text-teal-500" /> }, // Using Lucide for consistency
+    { label: 'Nature', icon: <FaTree className="text-lime-500" /> }
   ];
 
+  // Effect to fetch custom activities from the backend on component mount or userEmail change
+  useEffect(() => {
+    const loadPersistedActivities = async () => {
+      if (!userEmail) {
+        setIsLoadingActivities(false);
+        return;
+      }
+      setIsLoadingActivities(true);
+      setActivityError(null);
+      try {
+        const activities = await fetchCustomActivities(userEmail);
+        setPersistedCustomActivities(activities);
+      } catch (err) {
+        console.error('Error loading persisted activities:', err);
+        setActivityError('Failed to load your custom activities.');
+      } finally {
+        setIsLoadingActivities(false);
+      }
+    };
+
+    loadPersistedActivities();
+  }, [userEmail]);
 
   // Handles changes for text input fields (title, content)
   const handleInputChange = (e) => {
@@ -56,29 +121,55 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
     setEntryData(prev => ({ ...prev, mood: moodId }));
   };
 
-  // Toggles an activity in the activities list
-  const toggleActivitySelection = (activity) => {
+  // Toggles an activity in the activities list for the CURRENT entry
+  const toggleActivitySelection = (activityLabel) => {
     setEntryData(prev => {
       const currentActivities = prev.activities || [];
       return {
         ...prev,
-        activities: currentActivities.includes(activity)
-          ? currentActivities.filter(a => a !== activity)
-          : [...currentActivities, activity]
+        activities: currentActivities.includes(activityLabel)
+          ? currentActivities.filter(a => a !== activityLabel)
+          : [...currentActivities, activityLabel]
       };
     });
   };
 
-  // Adds a custom activity to the list
-  const addCustomActivity = () => {
-    if (newActivityInput.trim() && !entryData.activities.includes(newActivityInput.trim())) {
+  // Adds a custom activity to the list AND persists it to the backend
+  const addCustomActivity = async () => {
+    const activityToAdd = newActivityInput.trim();
+    // Prevent adding if empty, already selected for current entry, or already a persisted activity
+    if (!activityToAdd || entryData.activities.includes(activityToAdd) || persistedCustomActivities.includes(activityToAdd)) {
+      return;
+    }
+
+    setIsLoadingActivities(true);
+    setActivityError(null);
+    try {
+      // Add to the current entry's selected activities
       setEntryData(prev => ({
         ...prev,
-        activities: [...(prev.activities || []), newActivityInput.trim()]
+        activities: [...(prev.activities || []), activityToAdd]
       }));
+
+      // Persist to backend
+      const updatedPersistedActivities = await addCustomActivityToBackend(userEmail, activityToAdd);
+      setPersistedCustomActivities(updatedPersistedActivities);
       setNewActivityInput(''); // Clear the input field
+    } catch (err) {
+      console.error('Error adding custom activity:', err);
+      setActivityError('Failed to save new activity.');
+      // Revert entryData.activities if backend save fails
+      setEntryData(prev => ({
+        ...prev,
+        activities: prev.activities.filter(a => a !== activityToAdd)
+      }));
+    } finally {
+      setIsLoadingActivities(false);
     }
   };
+
+
+
 
   // Adds a new goal to the list
   const addMicroGoal = () => {
@@ -117,26 +208,46 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
   };
 
 
-  // Handles image file selection
+
+
+  // Removes a custom activity from the persisted list in the backend
+  const removePersistedActivity = async (activityToRemove) => {
+    setIsLoadingActivities(true);
+    setActivityError(null);
+    try {
+      // Remove from the current entry's selected activities if it was selected
+      setEntryData(prev => ({
+        ...prev,
+        activities: prev.activities.filter(a => a !== activityToRemove)
+      }));
+
+      // Remove from backend
+      const updatedPersistedActivities = await deleteCustomActivityFromBackend(userEmail, activityToRemove);
+      setPersistedCustomActivities(updatedPersistedActivities);
+    } catch (err) {
+      console.error('Error deleting custom activity:', err);
+      setActivityError('Failed to delete activity.');
+    } finally {
+      setIsLoadingActivities(false);
+    }
+  };
+
   const handleImageFileChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       setEntryData(prev => ({
         ...prev,
-        images: [...prev.images, ...files] // Add File objects to images array
+        images: [...prev.images, ...files]
       }));
 
-      // Create object URLs for immediate preview
       const newPreviews = files.map(file => URL.createObjectURL(file));
       setImagePreviews(prev => [...prev, ...newPreviews]);
     }
   };
 
-  // Removes an image from the form data and revokes its preview URL
   const removeImage = (index) => {
     const imageToRemove = entryData.images[index];
 
-    // If it's a File object, revoke its URL to prevent memory leaks
     if (imageToRemove instanceof File) {
       const previewToRemove = imagePreviews[index];
       URL.revokeObjectURL(previewToRemove);
@@ -144,27 +255,24 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
 
     setEntryData(prev => {
       const newImages = [...prev.images];
-      newImages.splice(index, 1); // Remove the image file/URL
+      newImages.splice(index, 1);
       return { ...prev, images: newImages };
     });
 
     setImagePreviews(prev => {
       const newPreviews = [...prev];
-      newPreviews.splice(index, 1); // Remove the preview URL
+      newPreviews.splice(index, 1);
       return newPreviews;
     });
   };
 
-  // Handles form submission, including image upload to Cloudinary
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true); // Set loading state
+    setIsSubmitting(true);
 
-    // Cloudinary credentials 
     const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
     const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
 
-    // Separate existing image URLs from new image files
     const existingImageUrls = entryData.images.filter(image => typeof image === 'string');
     const newImageFiles = entryData.images.filter(image => image instanceof File);
 
@@ -185,23 +293,19 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
         }
       } catch (err) {
         console.error("Image upload failed:", err);
-        // Implement user-friendly error feedback here (e.g., a toast notification)
       }
     });
 
-    await Promise.all(uploadPromises); // Wait for all new images to upload
+    await Promise.all(uploadPromises);
 
-
-    // Prepare the final data to be submitted
     const finalEntryData = {
       ...entryData,
-      images: [...existingImageUrls, ...uploadedImageUrls], // Combine existing and new uploaded URLs
+      images: [...existingImageUrls, ...uploadedImageUrls],
     };
 
-    onSubmit(finalEntryData); // Call the onSubmit prop with the final data
-    setIsSubmitting(false); // Reset loading state
+    onSubmit(finalEntryData);
+    setIsSubmitting(false);
   };
-
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 p-8 bg-white/90 dark:bg-neutral-900/80 backdrop-blur-md rounded-2xl shadow-2xl">
@@ -236,7 +340,7 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
               className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 ease-in-out text-sm font-medium ${entryData.mood === mood.id
                   ? mood.color + ' ring-2 ring-offset-2 ring-primary-500 dark:ring-offset-neutral-900 shadow-md'
                   : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                }`}
+                  }`}
             >
               <span>{mood.icon}</span>
               <span>{mood.label}</span>
@@ -246,51 +350,76 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
         </div>
       </div>
 
-      {/* Activities Section */}
+      {/* Activities Section - Restored Buttons with Persistence */}
       <div>
         <label className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
           Activities (optional)
         </label>
-        <div className="flex flex-wrap gap-2 mb-3">
-          {commonActivities.map(({ label, icon }) => {
-            const isSelected = entryData.activities?.includes(label); // ✅ Define it here
+        {isLoadingActivities ? (
+          <div className="flex items-center text-neutral-500 dark:text-neutral-400">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading activities...
+          </div>
+        ) : activityError ? (
+          <div className="text-red-500 text-sm mb-3">{activityError}</div>
+        ) : (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {/* Render Common Activities as buttons */}
+            {commonActivities.map(({ label, icon }) => {
+              const isSelected = entryData.activities?.includes(label);
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => toggleActivitySelection(label)}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm rounded-full border transition-all duration-200
+                    ${isSelected
+                      ? 'bg-primary-100/50 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 ring-2 ring-primary-400 dark:ring-primary-600 border-primary-400 shadow-sm'
+                      : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 border-neutral-300 dark:border-neutral-700'
+                    }
+                  `}
+                >
+                  {icon}
+                  <span>{label}</span>
+                  {isSelected && <span className="ml-1 text-green-500">✅</span>}
+                </button>
+              );
+            })}
 
-            return (
-              <button
-                key={label}
-                type="button"
-                onClick={() => toggleActivitySelection(label)}
-                className={`flex items-center gap-2 px-4 py-2 text-sm rounded-full border transition-all duration-200
-            ${isSelected
-                    ? 'bg-primary-100/50 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 ring-2 ring-primary-400 dark:ring-primary-600 border-primary-400 shadow-sm'
-                    : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 border-neutral-300 dark:border-neutral-700'
-                  }
-          `}
-              >
-                {icon}
-                <span>{label}</span>
-                {isSelected && <span className="ml-1 text-green-500">✅</span>}
-              </button>
-            );
-          })}
+            {/* Render Persisted Custom Activities as buttons */}
+            {persistedCustomActivities.map(activity => {
+              // Ensure it's not a common activity (to avoid duplicates if labels overlap)
+              const isCommonActivity = commonActivities.some(ca => ca.label === activity);
+              if (isCommonActivity) return null; // Skip if it's already covered by commonActivities
 
-
-
-          {/* Render custom activities already added */}
-
-          {entryData.activities?.filter(a => !commonActivities.includes(a)).map(activity => (
-            <button
-              key={activity}
-              type="button"
-              onClick={() => toggleActivitySelection(activity)}
-              className="bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 px-3 py-1.5 text-sm rounded-full ring-1 ring-primary-400"
-            >
-              {activity}
-            </button>
-          ))}
-
-
-        </div>
+              const isSelected = entryData.activities?.includes(activity);
+              return (
+                <button
+                  key={activity}
+                  type="button"
+                  onClick={() => toggleActivitySelection(activity)}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm rounded-full border transition-all duration-200
+                    ${isSelected
+                      ? 'bg-primary-100/50 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 ring-2 ring-primary-400 dark:ring-primary-600 border-primary-400 shadow-sm'
+                      : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 border-neutral-300 dark:border-neutral-700'
+                    }
+                  `}
+                >
+                  <span>{activity}</span>
+                  {isSelected && <span className="ml-1 text-green-500">✅</span>}
+                  {/* Show delete button only for persisted custom activities */}
+                  <Trash2
+                    size={14}
+                    className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent toggling selection when clicking delete
+                      removePersistedActivity(activity);
+                    }}
+                  />
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Custom Activity Input */}
         <div className="flex rounded-lg shadow-sm">
@@ -304,13 +433,13 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
           <button
             type="button"
             onClick={addCustomActivity}
-            disabled={!newActivityInput.trim()}
-            className={`px-5 py-2 font-medium text-sm rounded-lg 
-    text-white bg-primary-600 
-    hover:bg-primary-700 active:scale-95 
-    focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 
-    dark:focus:ring-offset-neutral-900 
-    transition-all duration-200 
+            disabled={!newActivityInput.trim() || isLoadingActivities}
+            className={`px-5 py-2 font-medium text-sm rounded-lg
+    text-white bg-primary-600
+    hover:bg-primary-700 active:scale-95
+    focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+    dark:focus:ring-offset-neutral-900
+    transition-all duration-200
     disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none shadow-md`}
           >
             ➕ Add
@@ -431,41 +560,40 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
           value={entryData.content}
           onChange={handleInputChange}
           required
-          className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg 
-      bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 
-      placeholder-neutral-400 dark:placeholder-neutral-500 
-      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent 
-      shadow-sm focus:shadow-primary-200/50 dark:focus:shadow-primary-900/30 
+          className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg
+      bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100
+      placeholder-neutral-400 dark:placeholder-neutral-500
+      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+      shadow-sm focus:shadow-primary-200/50 dark:focus:shadow-primary-900/30
       min-h-[180px] resize-y transition-all duration-200"
           placeholder="Write your thoughts and experiences here..."
         />
 
-
-        <div className="mt-4 p-3 border border-neutral-300 dark:border-neutral-700 rounded-md 
+         <div className="mt-4 p-3 border border-neutral-300 dark:border-neutral-700 rounded-md
       bg-neutral-50 dark:bg-neutral-900 text-sm prose dark:prose-invert max-w-none">
-          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(entryData.content || "")) }} />
-        </div>
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(entryData.content || "")) }} />
+            </div>
       </div>
 
       {/* Submit Button */}
       <div className="mt-6">
         <button
           type="submit"
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold rounded-xl 
-      text-white bg-primary-600 hover:bg-primary-700 
-      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 
-      dark:focus:ring-offset-neutral-900 
-      transition-all duration-200 ease-in-out 
-      disabled:opacity-50 disabled:cursor-not-allowed 
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold rounded-xl
+      text-white bg-primary-600 hover:bg-primary-700
+      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500
+      dark:focus:ring-offset-neutral-900
+      transition-all duration-200 ease-in-out
+      disabled:opacity-50 disabled:cursor-not-allowed
       shadow-md hover:shadow-lg active:scale-[0.98]"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              <span className="animate-pulse">
-                {initialData.id ? 'Saving...' : 'Creating...'}
-              </span>
+               <span className="animate-pulse">
+                  {initialData.id ? 'Saving...' : 'Creating...'}
+                </span>
             </>
           ) : (
             initialData.id ? '💾 Save Changes' : '📝 Create Entry'
