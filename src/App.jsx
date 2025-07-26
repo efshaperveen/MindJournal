@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import { useTheme } from './contexts/ThemeContext'
+import { Toaster } from 'react-hot-toast'
 
 // Layouts
 import MainLayout from './layouts/MainLayout'
@@ -46,9 +47,11 @@ function App() {
   }, [theme])
 
   return (
-    <Routes>
-      {/* Auth routes */}
-      <Route path="/" element={<AuthLayout />}>
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      <Routes>
+        {/* Auth routes */}
+        <Route path="/" element={<AuthLayout />}>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword/>}/>
@@ -75,7 +78,7 @@ function App() {
       {/* 404 route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
- 
+    </>
   )
 }
 

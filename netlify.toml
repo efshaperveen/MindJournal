@@ -1,4 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  
+[build.environment]
+    SECRETS_SCAN_OMIT_KEYS = "VITE_GOOGLE_CLIENT_ID"
+
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200

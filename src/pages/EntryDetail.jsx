@@ -1,11 +1,17 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useJournal } from '../contexts/JournalContext'
 import { format } from 'date-fns'
-import { FiArrowLeft, FiEdit2, FiTrash2 } from 'react-icons/fi'
+import { FiArrowLeft, FiEdit2, FiTrash2, FiDownload } from 'react-icons/fi'
 import MoodIcon, { getMoodColor } from '../components/journal/MoodIcon'
+import EntryPDF from '../components/journal/EntryPDF'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+import toast from 'react-hot-toast'
+import { useState } from 'react'
 
 const EntryDetail = () => {
   const { id } = useParams()
+  const [isDownloading, setIsDownloading] = useState(false)
   const { getEntry, deleteEntry } = useJournal()
   const navigate = useNavigate()
   
@@ -39,6 +45,49 @@ const EntryDetail = () => {
       navigate('/journal')
     }
   }
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    toast.success('Download started...');
+
+    const pdfContainer = document.createElement('div');
+    pdfContainer.style.position = 'absolute';
+    pdfContainer.style.left = '-9999px';
+    document.body.appendChild(pdfContainer);
+
+    const pdfComponent = <EntryPDF entry={entry} />;
+    
+    const tempRoot = createRoot(pdfContainer);
+    tempRoot.render(pdfComponent);
+    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const pdfContent = pdfContainer.querySelector('#pdf-content');
+    
+    const canvas = await html2canvas(pdfContent, {
+      scale: 2,
+      useCORS: true,
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const ratio = canvasWidth / canvasHeight;
+    const width = pdfWidth;
+    const height = width / ratio;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, width, height > pdfHeight ? pdfHeight : height);
+    
+    const formattedDate = format(new Date(entry.createdAt), 'dd-MMMM-yyyy');
+    pdf.save(`${formattedDate}.pdf`);
+
+    tempRoot.unmount();
+    document.body.removeChild(pdfContainer);
+    setIsDownloading(false);
+  };
   
   return (
     <div className="max-w-2xl mx-auto animate-fadeIn">
@@ -70,6 +119,13 @@ const EntryDetail = () => {
             className="btn text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20"
           >
             <FiTrash2 size={18} />
+          </button>
+          <button
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="btn btn-outline flex items-center space-x-2"
+          >
+            <FiDownload size={18} />
           </button>
         </div>
       </div>
@@ -144,5 +200,7 @@ const EntryDetail = () => {
     </div>
   )
 }
+
+import { createRoot } from 'react-dom/client';
 
 export default EntryDetail
