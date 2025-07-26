@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Check, Smile, Meh, Frown, UploadCloud, XCircle, Loader2, Trash2 } from 'lucide-react'; // Added Trash2 icon
+import { Check, Smile, Meh, Frown, UploadCloud, XCircle, Loader2 } from 'lucide-react'; // Switched to lucide-react for different icons
 
 // Define mood options with updated colors and lucide-react icons
 const moods = [
-  { id: 'great', label: 'Great', icon: <Smile className="text-green-500" size={24} />, color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' },
+  { id: 'great', label: 'Epic', icon: <Smile className="text-green-500" size={24} />, color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' },
   { id: 'good', label: 'Good', icon: <Smile className="text-blue-500" size={24} />, color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' },
   { id: 'okay', label: 'Okay', icon: <Meh className="text-yellow-500" size={24} />, color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200' },
   { id: 'bad', label: 'Bad', icon: <Meh className="text-orange-500" size={24} />, color: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200' },
@@ -69,54 +69,11 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
   // State for loading indicator during form submission (especially image upload)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // NEW: State to store custom activities fetched from the backend
-  const [persistedCustomActivities, setPersistedCustomActivities] = useState([]);
-  // NEW: State for loading custom activities
-  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
-  // NEW: State for error fetching/adding/deleting custom activities
-  const [activityError, setActivityError] = useState(null);
-
-  // Common activities for quick selection (these are not user-specific)
+  // Common activities for quick selection
   const commonActivities = [
     'Exercise', 'Reading', 'Meditation', 'Work', 'Family time',
     'Friends', 'Hobbies', 'Self-care', 'Relaxation', 'Nature'
   ];
-
-  // NEW: Effect to fetch custom activities from the backend on component mount
-  useEffect(() => {
-    console.log('useEffect for activities triggered. userEmail:', userEmail); // Debug log 2
-    const loadPersistedActivities = async () => {
-      if (!userEmail) {
-        // If no userEmail, we can't fetch user-specific activities
-        console.warn('No userEmail provided, skipping custom activity fetch.'); // Debug log 3
-        setIsLoadingActivities(false);
-        return;
-      }
-      setIsLoadingActivities(true);
-      setActivityError(null);
-      try {
-        const activities = await fetchCustomActivities(userEmail);
-        setPersistedCustomActivities(activities);
-        console.log('Fetched persisted activities:', activities); // Debug log 4
-      } catch (err) {
-        console.error('Error loading persisted activities:', err);
-        setActivityError('Failed to load your custom activities.');
-      } finally {
-        setIsLoadingActivities(false);
-      }
-    };
-
-    loadPersistedActivities();
-  }, [userEmail]); // Re-run when userEmail changes
-
-  // Combine common and persisted custom activities for display
-  // Use a Set to ensure uniqueness and then convert back to Array
-  const allAvailableActivities = Array.from(new Set([
-    ...commonActivities,
-    ...(persistedCustomActivities || [])
-  ]));
-  console.log('All available activities for display:', allAvailableActivities); // Debug log 5
-
 
   // Handles changes for text input fields (title, content)
   const handleInputChange = (e) => {
@@ -273,6 +230,7 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
 
     await Promise.all(uploadPromises); // Wait for all new images to upload
 
+
     // Prepare the final data to be submitted
     const finalEntryData = {
       ...entryData,
@@ -283,8 +241,9 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
     setIsSubmitting(false); // Reset loading state
   };
 
+  
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-xl font-inter">
+    <form onSubmit={handleSubmit} className="space-y-8 p-8 bg-white/90 dark:bg-neutral-900/80 backdrop-blur-md rounded-2xl shadow-2xl">
       {/* Title Input */}
       <div>
         <label htmlFor="title" className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
@@ -304,7 +263,7 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
 
       {/* Mood Selection */}
       <div>
-        <label className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
+        <label className="text-sm font-semibold tracking-wide text-neutral-700 dark:text-neutral-300">
           How are you feeling today? <span className="text-red-500">*</span>
         </label>
         <div className="flex flex-wrap gap-3">
@@ -332,41 +291,34 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
         <label className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
           Activities (optional)
         </label>
-        {isLoadingActivities ? (
-          <div className="flex items-center text-neutral-500 dark:text-neutral-400">
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading activities...
-          </div>
-        ) : activityError ? (
-          <div className="text-red-500 text-sm mb-3">{activityError}</div>
-        ) : (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {allAvailableActivities.map(activity => (
-              <button
-                key={activity}
-                type="button"
-                onClick={() => toggleActivitySelection(activity)}
-                className={`px-3 py-1.5 text-sm rounded-full transition-all duration-200 ${
-                  entryData.activities?.includes(activity)
-                    ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 ring-1 ring-primary-400'
-                    : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                } flex items-center`}
-              >
-                {activity}
-                {/* Show delete button only for persisted custom activities */}
-                {persistedCustomActivities.includes(activity) && (
-                  <Trash2
-                    size={14}
-                    className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent toggling selection when clicking delete
-                      removePersistedActivity(activity);
-                    }}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-wrap gap-2 mb-3">
+          {commonActivities.map(activity => (
+            <button
+              key={activity}
+              type="button"
+              onClick={() => toggleActivitySelection(activity)}
+              className={`px-3 py-1.5 text-sm rounded-full transition-all duration-200 ${
+                entryData.activities?.includes(activity)
+                  ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 ring-1 ring-primary-400'
+                  : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+              }`}
+            >
+              {activity}
+            </button>
+          ))}
+
+          {/* Render custom activities already added */}
+          {entryData.activities?.filter(a => !commonActivities.includes(a)).map(activity => (
+            <button
+              key={activity}
+              type="button"
+              onClick={() => toggleActivitySelection(activity)}
+              className="bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200 px-3 py-1.5 text-sm rounded-full ring-1 ring-primary-400"
+            >
+              {activity}
+            </button>
+          ))}
+        </div>
 
         {/* Custom Activity Input */}
         <div className="flex rounded-lg shadow-sm">
@@ -381,7 +333,7 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
             type="button"
             onClick={addCustomActivity}
             className="px-4 py-2 bg-primary-600 text-white rounded-r-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!newActivityInput.trim() || isLoadingActivities}
+            disabled={!newActivityInput.trim()}
           >
             Add
           </button>
@@ -393,7 +345,7 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
         <label className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
           Attach Images (optional)
         </label>
-        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-neutral-300 dark:border-neutral-700 border-dashed rounded-lg">
+        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-neutral-300 dark:border-neutral-700 border-dashed rounded-lg border-neutral-300 dark:border-neutral-700 transition-all duration-200 hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/10">
           <div className="space-y-1 text-center">
             <UploadCloud className="mx-auto h-12 w-12 text-neutral-400" />
             <div className="flex text-sm text-neutral-600 dark:text-neutral-400">
@@ -413,11 +365,11 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
           <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {imagePreviews.map((preview, index) => (
               <div key={index} className="relative group">
-                <img src={preview} alt={`preview ${index}`} className="h-28 w-full object-cover rounded-md shadow-sm border border-neutral-200 dark:border-neutral-700" />
+                <img src={preview} alt={`preview ${index}`} className="h-28 w-full object-cover rounded-md shadow-sm border border-neutral-200 dark:border-neutral-700 transition-transform duration-300 ease-in-out group-hover:scale-[1.02]" />
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
+                  className="absolute top-1 right-1 bg-red-500/90 text-white rounded-full p-1 backdrop-blur-md shadow-md opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
                   aria-label="Remove image"
                 >
                   <XCircle size={16} />
@@ -439,25 +391,44 @@ const EntryForm = ({ onSubmit, initialData = {}, userEmail }) => {
           value={entryData.content}
           onChange={handleInputChange}
           required
-          className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 min-h-[180px] transition-colors duration-200 resize-y"
+          className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg 
+      bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 
+      placeholder-neutral-400 dark:placeholder-neutral-500 
+      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent 
+      shadow-sm focus:shadow-primary-200/50 dark:focus:shadow-primary-900/30 
+      min-h-[180px] resize-y transition-all duration-200"
           placeholder="Write your thoughts and experiences here..."
         />
+
+
+         <div className="mt-4 p-3 border border-neutral-300 dark:border-neutral-700 rounded-md 
+      bg-neutral-50 dark:bg-neutral-900 text-sm prose dark:prose-invert max-w-none">
+    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(entryData.content || "")) }} />
+  </div>
       </div>
 
       {/* Submit Button */}
-      <div>
+      <div className="mt-6">
         <button
           type="submit"
-          className="w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-neutral-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold rounded-xl 
+      text-white bg-primary-600 hover:bg-primary-700 
+      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 
+      dark:focus:ring-offset-neutral-900 
+      transition-all duration-200 ease-in-out 
+      disabled:opacity-50 disabled:cursor-not-allowed 
+      shadow-md hover:shadow-lg active:scale-[0.98]"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" />
+               <span className="animate-pulse">
               {initialData.id ? 'Saving...' : 'Creating...'}
+              </span>
             </>
           ) : (
-            initialData.id ? 'Save Changes' : 'Create Entry'
+            initialData.id ? '💾 Save Changes' : '📝 Create Entry'
           )}
         </button>
       </div>

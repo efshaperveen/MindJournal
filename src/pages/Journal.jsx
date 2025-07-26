@@ -72,11 +72,11 @@ const Journal = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="max-w-5xl mx-auto px-4 py-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white">Journal</h1>
+      <div className="sticky top-4 z-10 bg-white dark:bg-neutral-900/90 backdrop-blur-lg rounded-xl shadow-sm px-4 py-2 mb-6">
+        <div className='flex flex-wrap justify-between items-center gap-2'>
+          <h1 className="text-2xl font-bold text-neutral-800 dark:text-white">📝 Journal</h1>
           <p className="text-neutral-600 dark:text-neutral-400 mt-1">
             {entries.length} {entries.length === 1 ? 'entry' : 'entries'} total
           </p>
@@ -86,24 +86,24 @@ const Journal = () => {
           {/* Filter Toggle */}
           <button
             onClick={toggleFilters}
-            className={`btn btn-outline flex items-center space-x-2 ${
+            className={`btn btn-outline flex items-center space-x-2 rounded-xl shadow-sm transition-all duration-200 ${
               showFilters || filters.mood.length > 0 || filters.search
                 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-700'
-                : ''
+                : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
             }`}
             aria-expanded={showFilters}
           >
             <FiFilter size={18} />
             <span>Filter</span>
             {(filters.mood.length > 0 || filters.search) && (
-              <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary-500 text-white text-xs">
+              <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary-500 text-white text-xs font-medium">
                 {filters.mood.length + (filters.search ? 1 : 0)}
               </span>
             )}
           </button>
 
           {/* New Entry */}
-          <Link to="/journal/new" className="btn btn-primary flex items-center space-x-2">
+          <Link to="/journal/new" className="btn btn-primary flex items-center space-x-2 rounded-xl ">
             <FiPlus size={18} />
             <span>New Entry</span>
           </Link>
@@ -120,11 +120,11 @@ const Journal = () => {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="font-medium">Filters</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-semibold text-lg">Filters</h2>
               <button
                 onClick={clearFilters}
-                className="text-sm text-primary-600 dark:text-primary-400 flex items-center"
+                className="text-sm text-primary-600 dark:text-primary-400 hover:underline flex items-center"
               >
                 <FiX size={16} className="mr-1" />
                 Clear all
@@ -146,7 +146,7 @@ const Journal = () => {
                   name="search"
                   value={filters.search}
                   onChange={handleFilterChange}
-                  className="input"
+                  className="input rounded-md px-3 py-2 shadow-sm border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 placeholder:text-sm"
                   placeholder="Search entries..."
                 />
               </div>
@@ -158,9 +158,9 @@ const Journal = () => {
                 </label>
                 <button
                   onClick={() => setShowMoodDropdown(!showMoodDropdown)}
-                  className="w-full input text-left flex justify-between items-center"
+                  className="w-full input text-left flex justify-between items-center rounded-md px-3 py-2 shadow-sm border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800"
                 >
-                  <span>
+                  <span className="text-sm">
                     {filters.mood.length > 0 ? `${filters.mood.length} selected` : 'All moods'}
                   </span>
                   <svg
@@ -208,13 +208,13 @@ const Journal = () => {
 
       {/* Entry List */}
       {filteredEntries.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
           {filteredEntries.map(entry => (
             <EntryCard key={entry.id} entry={entry} onDelete={handleDelete} />
           ))}
         </div>
       ) : (
-        <div className="card p-8 text-center">
+        <div className="card p-8 mt-6 text-center rounded-xl shadow-sm">
           {entries.length > 0 ? (
             <>
               <h3 className="text-lg font-medium text-neutral-800 dark:text-white mb-2">
@@ -223,7 +223,7 @@ const Journal = () => {
               <p className="text-neutral-600 dark:text-neutral-400 mb-4">
                 Try adjusting your search terms or filters
               </p>
-              <button onClick={clearFilters} className="btn btn-outline">
+              <button onClick={clearFilters} className="btn btn-outline rounded-xl">
                 Clear filters
               </button>
             </>
@@ -235,7 +235,7 @@ const Journal = () => {
               <p className="text-neutral-600 dark:text-neutral-400 mb-4">
                 Create your first entry to start your journaling journey
               </p>
-              <Link to="/journal/new" className="btn btn-primary">
+              <Link to="/journal/new" className="btn btn-primary rounded-xl">
                 Create first entry
               </Link>
             </>
