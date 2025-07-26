@@ -43,7 +43,7 @@ const deleteCustomActivityFromBackend = async (userEmail, activity) => {
   if (!response.ok) {
     throw new Error('Failed to delete custom activity from backend');
   }
-  return response.json(); // Should return the updated list of activities
+  return response.json(); //  return the updated list of activities
 };
 // --- End API Utility Functions ---
 
