@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/mindbot', mindbotRoutes);
-app.use('/api/custom-activities', customActivitiesRoutes); // 👈 new route
+app.use('/api/custom-activities', customActivitiesRoutes); //  new route
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
