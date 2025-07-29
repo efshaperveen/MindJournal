@@ -39,7 +39,7 @@ const AffirmationBanner = () => {
       className="bg-primary-100 dark:bg-primary-800 text-primary-900 dark:text-primary-100 rounded-md p-4 text-center shadow-sm cursor-pointer select-none hover:opacity-90 transition"
       title="Click to refresh affirmation"
     >
-      <p className="italic font-medium">“{quote}”</p>
+      <p className="italic font-playwrite-au font-extralight">“{quote}”</p>
     </div>
   );
 };

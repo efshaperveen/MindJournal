@@ -1,38 +1,38 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
-import { FiUser, FiLock } from 'react-icons/fi'
-import { GoogleLogin } from '@react-oauth/google';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { FiUser, FiLock } from "react-icons/fi";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  
-  const { login, loginWithGoogle } = useAuth()
-  
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { login, loginWithGoogle } = useAuth();
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     try {
-      setError('')
-      setLoading(true)
-      await login(email, password)
+      setError("");
+      setLoading(true);
+      await login(email, password);
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-  
+  };
+
   return (
     <div className="card p-6 w-full animate-fadeIn">
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-          Welcome Back
+        <h1 className="text-2xl font-playwrite font-bold text-neutral-900 dark:text-white mb-2">
+          Welcome Back!
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
+        <p className="font-libre-baskerville text-neutral-600 dark:text-neutral-400">
           Sign in to your MindJournal account
         </p>
       </div>
@@ -47,7 +47,7 @@ const Login = () => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+            className="block text-sm font-libre-baskerville font-medium text-neutral-700 dark:text-neutral-300 mb-1"
           >
             Email
           </label>
@@ -61,7 +61,7 @@ const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="input pl-10"
+              className="input pl-10 font-lora"
               placeholder="your@email.com"
             />
           </div>
@@ -70,7 +70,7 @@ const Login = () => {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+            className="block text-sm font-libre-baskerville font-medium text-neutral-700 dark:text-neutral-300 mb-1"
           >
             Password
           </label>
@@ -92,7 +92,7 @@ const Login = () => {
         <div className="text-right text-sm">
           <Link
             to="/forgot-password"
-            className="text-primary-600 dark:text-primary-400 hover:underline"
+            className="font-lora font-medium text-primary-600 dark:text-primary-400 hover:underline"
           >
             Forgot Password?
           </Link>
@@ -101,36 +101,38 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="btn btn-primary w-full"
+          className="btn btn-primary w-full font-libre-baskerville font-medium"
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
       </form>
 
       <div className="mt-4 text-center">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">or</p>
+        <p className="text-[16px] font-lora font-medium text-neutral-600 dark:text-neutral-400">
+          or
+        </p>
       </div>
 
       <div className="mt-4 flex justify-center">
         <GoogleLogin
           onSuccess={loginWithGoogle}
           onError={() => {
-            setError('Google login failed. Please try again.');
+            setError("Google login failed. Please try again.");
           }}
         />
       </div>
 
-      <div className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
+      <div className="mt-6 text-center text-sm font-libre-baskerville text-neutral-600 dark:text-neutral-400">
         Don't have an account?{" "}
         <Link
           to="/register"
-          className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
+          className="font-playwrite-au font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
         >
           Create an account
         </Link>
       </div>
     </div>
   );
-}
+};
 
-export default Login
+export default Login;

@@ -1,4 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Moon+Dance&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Moon+Dance&display=swap");
+
+/* import additional fonts */
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+PL:wght@100..400&display=swap"); /*Content choice #1*/
+
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+AU+QLD:wght@100..400&display=swap"); /*Content choice #2*/
+
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"); /*Headings choice #1*/
+
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"); /*Headings choice #2*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,12 +17,17 @@
   html {
     @apply antialiased;
   }
-  
+
   body {
     @apply font-sans bg-neutral-50 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-100 transition-colors duration-300;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-semibold;
   }
 }
@@ -50,4 +65,22 @@
   font-style: normal;
 }
 
+/*We can also define font class here like it was done for moon-dance-regular above. This creates manual classes for which we will have to possibly define multiple
+instances of with different names, should we choose to utilize the different weights of the font (as shown below) 
 
+Since we plan on using Playwrite, Libre Bakersville, and Lora in multiple places throughout the website (i.e., using it globally, it's more efficient
+to define the font-family in the Tailwing.config.js file and declare the font via font-xyzname and then followed by the font weight such as font-light, font-normal, font-medium, or font-bold (depending on the weight range that is stated on Google fonts).*/
+
+/* .playwrite-regular {
+  font-family: "Playwrite PL", cursive;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.playwrite-bold {
+  font-family: "Playwrite PL", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+} */
