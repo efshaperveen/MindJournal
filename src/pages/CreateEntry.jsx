@@ -3,14 +3,16 @@ import { useJournal } from "../contexts/JournalContext";
 import EntryForm from "../components/journal/EntryForm";
 
 const CreateEntry = () => {
-  const { addEntry } = useJournal();
-  const navigate = useNavigate();
 
-  const handleSubmit = (formData) => {
-    const newEntry = addEntry(formData);
+  const { addEntry } = useJournal()
+  const navigate = useNavigate()
+  
+  const handleSubmit = (formData, quote) => {
+    const newEntry = addEntry(formData, quote);
     navigate(`/journal/${newEntry.id}`);
-  };
-
+    return newEntry;
+  }
+ 
   return (
     <div className="max-w-2xl mx-auto animate-fadeIn">
       <h1

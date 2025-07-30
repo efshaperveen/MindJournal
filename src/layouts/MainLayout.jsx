@@ -5,6 +5,7 @@ import MobileHeader from '../components/navigation/MobileHeader'
 import Sidebar from '../components/navigation/Sidebar'
 import QuoteLoader from '../components/loader/QuotesLoader'
 import MindChatFloat from '../pages/MindChatFloat'
+import PinConfirmModal from '../components/journal/PinConfirmModal'
 
 const MainLayoutContent = () => {
   const location = useLocation();
@@ -36,6 +37,7 @@ const MainLayoutContent = () => {
 
   return (
     <>
+      <PinConfirmModal />
       <div className={`min-h-screen flex flex-col md:flex-row bg-neutral-50 dark:bg-neutral-900`}>
         <MobileHeader />
         

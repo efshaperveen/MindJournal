@@ -1,22 +1,25 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useJournal } from "../contexts/JournalContext";
-import { format } from "date-fns";
-import { FiArrowLeft, FiEdit2, FiTrash2, FiDownload } from "react-icons/fi";
-import MoodIcon, { getMoodColor } from "../components/journal/MoodIcon";
-import EntryPDF from "../components/journal/EntryPDF";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import toast from "react-hot-toast";
-import { useState } from "react";
-import { Check } from "lucide-react";
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useJournal } from '../contexts/JournalContext'
+import { format } from 'date-fns'
+import { createRoot } from "react-dom/client";
+import { FiArrowLeft, FiEdit2, FiTrash2, FiDownload } from 'react-icons/fi'
+import MoodIcon, { getMoodColor } from '../components/journal/MoodIcon'
+import EntryPDF from '../components/journal/EntryPDF'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+import toast from 'react-hot-toast'
+import { useState } from 'react'
+import { Check } from 'lucide-react'
 
 const EntryDetail = () => {
-  const { id } = useParams();
-  const [isDownloading, setIsDownloading] = useState(false);
-  const { getEntry, deleteEntry } = useJournal();
-  const navigate = useNavigate();
+  const { id } = useParams()
+  const [isDownloading, setIsDownloading] = useState(false)
+  const { getEntry, deleteEntry } = useJournal()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const entry = getEntry(id);
+  const from = location.state?.from || '/journal';
+  const entry = getEntry(id)
 
   if (!entry) {
     return (
@@ -107,9 +110,9 @@ const EntryDetail = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center">
           <button
-            onClick={() => navigate("/journal")}
+            onClick={() => navigate(from)}
             className="mr-4 p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-            aria-label="Back to journal"
+            aria-label="Back"
           >
             <FiArrowLeft size={18} />
           </button>
@@ -120,7 +123,7 @@ const EntryDetail = () => {
 
         <div className="flex space-x-2">
           <button
-            onClick={() => navigate(`/journal/${id}/edit`)}
+            onClick={() => navigate(`/journal/${id}/edit`, { state: { from } })}
             className="btn btn-outline flex items-center space-x-2 font-lora text-[16px]"
           >
             <FiEdit2 size={18} />
@@ -267,7 +270,5 @@ const EntryDetail = () => {
     </div>
   );
 };
-
-import { createRoot } from "react-dom/client";
 
 export default EntryDetail;

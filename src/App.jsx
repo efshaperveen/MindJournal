@@ -17,6 +17,7 @@ import EditEntry from './pages/EditEntry'
 import Calendar from './pages/Calendar'
 import Stats from './pages/Stats'
 import Settings from './pages/Settings'
+import PrivateVault from './pages/PrivateVault'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import NotFound from './pages/NotFound'
@@ -71,6 +72,7 @@ function App() {
         <Route path="calendar" element={<Calendar />} />
         <Route path="stats" element={<Stats />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="private-vault" element={<PrivateVault />} />
         <Route path='mindchat' element={<MindChat/>}/>
       </Route>
       

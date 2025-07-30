@@ -1,38 +1,28 @@
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useTheme } from "../../contexts/ThemeContext";
-import {
-  FiHome,
-  FiBook,
-  FiCalendar,
-  FiPieChart,
-  FiSettings,
-  FiLogOut,
-  FiMessageCircle,
-  FiCheckCircle,
-} from "react-icons/fi";
-import ThemeToggle from "../common/ThemeToggle";
+
+import { NavLink } from 'react-router-dom'
+import { useAuth } from '../../contexts/AuthContext'
+import { useTheme } from '../../contexts/ThemeContext'
+import { FiHome, FiBook, FiCalendar, FiPieChart, FiSettings, FiLogOut, FiMessageCircle, FiShield } from 'react-icons/fi'
+import ThemeToggle from '../common/ThemeToggle'
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
 
   const navItems = [
-    { name: "Dashboard", path: "/", icon: <FiHome size={20} /> },
-    { name: "Journal", path: "/journal", icon: <FiBook size={20} /> },
-    { name: "Calendar", path: "/calendar", icon: <FiCalendar size={20} /> },
-    { name: "Insights", path: "/stats", icon: <FiPieChart size={20} /> },
-    { name: "Settings", path: "/settings", icon: <FiSettings size={20} /> },
-    {
-      name: "MindBot-AI",
-      path: "/mindchat",
-      icon: <FiMessageCircle size={20} />,
-    },
+    { name: 'Dashboard', path: '/', icon: <FiHome size={20} /> },
+    { name: 'Journal', path: '/journal', icon: <FiBook size={20} /> },
+    { name: 'Private Vault', path: '/private-vault', icon: <FiShield size={20} /> },
+    { name: 'Calendar', path: '/calendar', icon: <FiCalendar size={20} /> },
+    { name: 'Insights', path: '/stats', icon: <FiPieChart size={20} /> },
+    { name: 'Settings', path: '/settings', icon: <FiSettings size={20} /> },
+    { name: 'MindBot-AI', path: '/mindchat', icon: <FiMessageCircle  size={20} /> }
   ];
 
   const activeClass =
     "bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-200";
   const inactiveClass =
     "text-neutral-600 hover:bg-neutral-200 dark:text-neutral-300 dark:hover:bg-neutral-800";
+
 
   return (
     <aside className="h-screen sticky top-0 bg-white dark:bg-neutral-800 border-r border-neutral-200 dark:border-neutral-700 p-4 flex flex-col">
@@ -96,5 +86,4 @@ const Sidebar = () => {
     </aside>
   );
 };
-
-export default Sidebar;
+export default Sidebar
