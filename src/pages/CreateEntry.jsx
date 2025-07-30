@@ -6,9 +6,10 @@ const CreateEntry = () => {
   const { addEntry } = useJournal()
   const navigate = useNavigate()
   
-  const handleSubmit = (formData) => {
-    const newEntry = addEntry(formData)
-    navigate(`/journal/${newEntry.id}`)
+  const handleSubmit = (formData, quote) => {
+    const newEntry = addEntry(formData, quote);
+    navigate(`/journal/${newEntry.id}`);
+    return newEntry;
   }
   
   return (

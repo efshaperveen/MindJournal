@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useJournal } from '../../contexts/JournalContext';
-import { Check, Smile, Meh, Frown, UploadCloud, XCircle, Loader2, Trash2 } from 'lucide-react';
+import { Check, Smile, Meh, Frown, UploadCloud, XCircle, Loader2, Trash2, Shield } from 'lucide-react';
 import { FaRunning, FaBookOpen, FaPrayingHands, FaBriefcase, FaUsers } from 'react-icons/fa';
 import { marked } from "marked";
 import DOMPurify from "dompurify";
@@ -16,7 +16,8 @@ const moods = [
 ];
 
 const EntryForm = ({ onSubmit, initialData = {} }) => {
-  const { setActiveEntry } = useJournal();
+  const { setActiveEntry, privateEntryIds, togglePrivacy } = useJournal();
+  const [isPrivate, setIsPrivate] = useState(false);
   const [entryData, setEntryData] = useState({
     title: '',
     content: '',
@@ -34,6 +35,12 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
   const [isQuoteLoading, setIsQuoteLoading] = useState(false);
   const [generatedQuote, setGeneratedQuote] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (initialData.id) {
+      setIsPrivate(privateEntryIds.includes(initialData.id));
+    }
+  }, [initialData, privateEntryIds]);
 
   const commonActivities = [
     { label: 'Exercise', icon: <FaRunning className="text-red-500" /> },
@@ -168,7 +175,14 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
       ...entryData,
       images: [...existingImageUrls, ...uploadedImageUrls],
     };
-    onSubmit(finalEntryData, quote);
+    
+    const savedEntry = await onSubmit(finalEntryData, quote);
+
+    const currentlyIsPrivate = privateEntryIds.includes(savedEntry.id);
+    if (isPrivate !== currentlyIsPrivate) {
+      togglePrivacy(savedEntry.id);
+    }
+
     setIsSubmitting(false);
   };
 
@@ -422,6 +436,37 @@ const EntryForm = ({ onSubmit, initialData = {} }) => {
           />
           <div className="mt-4 p-3 border border-neutral-300 dark:border-neutral-700 rounded-md bg-neutral-50 dark:bg-neutral-900 text-sm prose dark:prose-invert max-w-none">
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(entryData.content || "")) }} />
+          </div>
+        </div>
+
+        <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700">
+          <div className="flex justify-between items-center p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
+            <div className="flex items-center gap-3">
+              <Shield className="text-neutral-500" />
+              <div>
+                <label htmlFor="isPrivate" className="font-semibold text-neutral-800 dark:text-neutral-200">
+                  Save to Vault
+                </label>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  This entry will be PIN-protected.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isPrivate}
+              onClick={() => setIsPrivate(!isPrivate)}
+              className={`${
+                isPrivate ? 'bg-primary-600' : 'bg-neutral-300 dark:bg-neutral-600'
+              } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
+            >
+              <span
+                className={`${
+                  isPrivate ? 'translate-x-6' : 'translate-x-1'
+                } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+              />
+            </button>
           </div>
         </div>
 

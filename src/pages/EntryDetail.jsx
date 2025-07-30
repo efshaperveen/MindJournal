@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useJournal } from '../contexts/JournalContext'
 import { format } from 'date-fns'
 import { FiArrowLeft, FiEdit2, FiTrash2, FiDownload } from 'react-icons/fi'
@@ -15,7 +15,9 @@ const EntryDetail = () => {
   const [isDownloading, setIsDownloading] = useState(false)
   const { getEntry, deleteEntry } = useJournal()
   const navigate = useNavigate()
+  const location = useLocation()
 
+  const from = location.state?.from || '/journal';
   const entry = getEntry(id)
 
   if (!entry) {
@@ -95,9 +97,9 @@ const EntryDetail = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center">
           <button
-            onClick={() => navigate('/journal')}
+            onClick={() => navigate(from)}
             className="mr-4 p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-            aria-label="Back to journal"
+            aria-label="Back"
           >
             <FiArrowLeft size={18} />
           </button>
@@ -108,7 +110,7 @@ const EntryDetail = () => {
 
         <div className="flex space-x-2">
           <button
-            onClick={() => navigate(`/journal/${id}/edit`)}
+            onClick={() => navigate(`/journal/${id}/edit`, { state: { from } })}
             className="btn btn-outline flex items-center space-x-2"
           >
             <FiEdit2 size={18} />

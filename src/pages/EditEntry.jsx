@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useJournal } from '../contexts/JournalContext'
 import EntryForm from '../components/journal/EntryForm'
 import { FiArrowLeft } from 'react-icons/fi'
@@ -7,7 +7,9 @@ const EditEntry = () => {
   const { id } = useParams()
   const { getEntry, updateEntry } = useJournal()
   const navigate = useNavigate()
-  
+  const location = useLocation()
+
+  const from = location.state?.from || '/journal';
   const entry = getEntry(id)
   
   if (!entry) {
@@ -29,16 +31,17 @@ const EditEntry = () => {
     )
   }
   
-  const handleSubmit = (formData) => {
-    updateEntry(id, formData)
-    navigate(`/journal/${id}`)
+  const handleSubmit = (formData, quote) => {
+    const updatedEntry = updateEntry(id, { ...formData, quote });
+    navigate(`/journal/${id}`, { state: { from } });
+    return updatedEntry;
   }
   
   return (
     <div className="max-w-2xl mx-auto animate-fadeIn">
       <div className="flex items-center mb-6">
         <button 
-          onClick={() => navigate(`/journal/${id}`)}
+          onClick={() => navigate(`/journal/${id}`, { state: { from } })}
           className="mr-4 p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
           aria-label="Back"
         >

@@ -1,12 +1,40 @@
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
-import { FiSun, FiMoon, FiUser, FiLock, FiTrash2, FiMail } from 'react-icons/fi'
+import { useJournal } from '../contexts/JournalContext'
+import { FiSun, FiMoon, FiUser, FiLock, FiTrash2, FiMail, FiShield } from 'react-icons/fi'
 
 const Settings = () => {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const { pin, setPin } = useJournal()
+  
+  const [newPin, setNewPin] = useState('')
+  const [confirmPin, setConfirmPin] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [pinSuccess, setPinSuccess] = useState('')
+  
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
+
+  const handleSetPin = (e) => {
+    e.preventDefault()
+    setPinError('')
+    setPinSuccess('')
+
+    if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+      setPinError('PIN must be 4 digits.')
+      return
+    }
+    if (newPin !== confirmPin) {
+      setPinError('PINs do not match.')
+      return
+    }
+    
+    setPin(newPin)
+    setPinSuccess('PIN has been updated successfully!')
+    setNewPin('')
+    setConfirmPin('')
+  }
   
   const clearAllData = () => {
     if (window.confirm('Are you sure you want to delete all your journal data? This action cannot be undone.')) {
@@ -119,6 +147,48 @@ const Settings = () => {
               </button>
             </div>
           </div>
+        </div>
+
+        <div className="border-b border-neutral-200 dark:border-neutral-700">
+          <h2 className="text-lg font-medium p-4 bg-neutral-50 dark:bg-neutral-800 flex items-center mb-4">
+            Vault Settings
+          </h2>
+          
+          <form onSubmit={handleSetPin} className="px-6 space-y-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {pin ? 'Change Vault PIN' : 'Set Vault PIN'}
+              </label>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-4">
+                Set a 4-digit PIN
+              </p>
+              <input
+                type="password"
+                placeholder="New 4-digit PIN"
+                value={newPin}
+                onChange={(e) => setNewPin(e.target.value)}
+                maxLength="4"
+                className="input w-full"
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Confirm PIN"
+                value={confirmPin}
+                onChange={(e) => setConfirmPin(e.target.value)}
+                maxLength="4"
+                className="input w-full"
+              />
+            </div>
+            
+            {pinError && <p className="text-sm text-red-600 dark:text-red-400">{pinError}</p>}
+            {pinSuccess && <p className="text-sm text-green-600 dark:text-green-400">{pinSuccess}</p>}
+            
+            <button type="submit" className="btn btn-primary w-full">
+              {pin ? 'Update PIN' : 'Save PIN'}
+            </button>
+          </form>
         </div>
         
         <div>

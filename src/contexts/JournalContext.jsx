@@ -10,6 +10,10 @@ export const JournalProvider = ({ children }) => {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeEntry, setActiveEntry] = useState(null);
+  const [pin, setPin] = useState(null);
+  const [privateEntryIds, setPrivateEntryIds] = useState([]);
+  const [isVaultUnlocked, setIsVaultUnlocked] = useState(false);
+  const [entryToMakePrivate, setEntryToMakePrivate] = useState(null);
 
   // This effect will reliably load entries from localStorage when the user is available
   // and will re-run if the user logs in or out.
@@ -26,10 +30,19 @@ export const JournalProvider = ({ children }) => {
         console.error("Failed to parse journal entries from localStorage", error);
         setEntries([]); // Reset to empty array on error
       }
+      const storedPin = localStorage.getItem(`journal_pin_${user.id}`);
+      if (storedPin) setPin(JSON.parse(storedPin));
+
+      const storedPrivateIds = localStorage.getItem(`journal_private_entries_${user.id}`);
+      if (storedPrivateIds) setPrivateEntryIds(JSON.parse(storedPrivateIds));
+
       setLoading(false);
     } else {
       // If there is no user, clear entries and stop loading.
       setEntries([]);
+      setPin(null);
+      setPrivateEntryIds([]);
+      setIsVaultUnlocked(false);
       setLoading(false);
     }
   }, [user]);
@@ -39,8 +52,33 @@ export const JournalProvider = ({ children }) => {
     // We only save if there's a user and the initial loading is complete.
     if (user && !loading) {
       localStorage.setItem(`journal_entries_${user.id}`, JSON.stringify(entries));
+      localStorage.setItem(`journal_pin_${user.id}`, JSON.stringify(pin));
+      localStorage.setItem(`journal_private_entries_${user.id}`, JSON.stringify(privateEntryIds));
     }
-  }, [entries, user, loading]);
+  }, [entries, pin, privateEntryIds, user, loading]);
+
+  const verifyPin = (enteredPin) => {
+    if (pin === enteredPin) {
+      setIsVaultUnlocked(true);
+      return true;
+    }
+    return false;
+  };
+
+  const togglePrivacy = (entryId) => {
+    setPrivateEntryIds(prev => {
+      const isPrivate = prev.includes(entryId);
+      if (isPrivate) {
+        return prev.filter(id => id !== entryId);
+      } else {
+        return [...prev, entryId];
+      }
+    });
+  };
+  
+  const logoutVault = () => {
+    setIsVaultUnlocked(false);
+  };
 
   const addEntry = (entry, quote = null) => {
     const newEntry = {
@@ -56,17 +94,21 @@ export const JournalProvider = ({ children }) => {
   };
 
   const updateEntry = (id, updatedEntry) => {
+    let entryToReturn = null;
     setEntries(prev => 
-      prev.map(entry => 
-        entry.id === id 
-          ? { 
-              ...entry, 
-              ...updatedEntry, 
-              updatedAt: new Date().toISOString() 
-            } 
-          : entry
-      )
+      prev.map(entry => {
+        if (entry.id === id) {
+          entryToReturn = { 
+            ...entry, 
+            ...updatedEntry, 
+            updatedAt: new Date().toISOString() 
+          };
+          return entryToReturn;
+        }
+        return entry;
+      })
     );
+    return entryToReturn;
   };
 
   const deleteEntry = (id) => {
@@ -75,6 +117,25 @@ export const JournalProvider = ({ children }) => {
 
   const getEntry = (id) => {
     return entries.find(entry => entry.id === id);
+  };
+
+  const requestPinToLock = (entryId) => {
+    setEntryToMakePrivate(entryId);
+  };
+
+  const cancelPinToLock = () => {
+    setEntryToMakePrivate(null);
+  };
+
+  const confirmPinToLock = (enteredPin) => {
+    if (pin === enteredPin) {
+      if (entryToMakePrivate) {
+        togglePrivacy(entryToMakePrivate);
+        setEntryToMakePrivate(null);
+        return true;
+      }
+    }
+    return false;
   };
 
   return (
@@ -86,7 +147,18 @@ export const JournalProvider = ({ children }) => {
       deleteEntry,
       getEntry,
       activeEntry,
-      setActiveEntry
+      setActiveEntry,
+      pin,
+      setPin,
+      privateEntryIds,
+      togglePrivacy,
+      isVaultUnlocked,
+      verifyPin,
+      logoutVault,
+      entryToMakePrivate,
+      requestPinToLock,
+      cancelPinToLock,
+      confirmPinToLock
     }}>
       {children}
     </JournalContext.Provider>

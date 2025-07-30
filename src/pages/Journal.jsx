@@ -9,7 +9,7 @@ import MoodIcon from '../components/journal/MoodIcon'
 const moodOptions = ['great', 'good', 'okay', 'bad', 'awful']
 
 const Journal = () => {
-  const { entries, deleteEntry } = useJournal()
+  const { entries, deleteEntry, privateEntryIds } = useJournal()
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState({
     mood: [],
@@ -49,8 +49,12 @@ const Journal = () => {
     setShowMoodDropdown(false)
   }
 
+  const publicEntries = useMemo(() => {
+    return entries.filter(entry => !privateEntryIds.includes(entry.id));
+  }, [entries, privateEntryIds]);
+
   const filteredEntries = useMemo(() => {
-    return entries.filter(entry => {
+    return publicEntries.filter(entry => {
       if (filters.mood.length > 0 && !filters.mood.includes(entry.mood)) {
         return false
       }
@@ -63,7 +67,7 @@ const Journal = () => {
       }
       return true
     })
-  }, [entries, filters])
+  }, [publicEntries, filters])
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
@@ -80,7 +84,7 @@ const Journal = () => {
       <div className='flex flex-wrap justify-between items-center gap-2'> {/* This is your original header-left div */}
         <h1 className="text-2xl font-bold text-neutral-800 dark:text-white">📝 Journal</h1>
         <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-          ({entries.length} {entries.length === 1 ? 'entry' : 'entries'} total)
+          ({publicEntries.length} {publicEntries.length === 1 ? 'entry' : 'entries'})
         </p>
       </div>
 
@@ -218,7 +222,7 @@ const Journal = () => {
         </div>
       ) : (
         <div className="card p-8 mt-6 text-center rounded-xl shadow-sm">
-          {entries.length > 0 ? (
+          {publicEntries.length > 0 ? (
             <>
               <h3 className="text-lg font-medium text-neutral-800 dark:text-white mb-2">
                 No entries match your filters
