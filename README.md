@@ -133,7 +133,7 @@ MindJournal/
 
 > Add a working demo link and preview screenshots here
 
-![App Preview](public/demo-screenshot.png)
+![App Preview](public/demo-screenshot.png.png)
 
 
 ---

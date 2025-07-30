@@ -48,11 +48,11 @@ const Register = () => {
   return (
     <div className="card p-6 w-full animate-fadeIn">
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
+        <h1 className="text-2xl font-libre-baskerville font-bold text-neutral-900 dark:text-white mb-2">
           Create Account
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
-          Join MindJournal to start your journal
+        <p className="font-libre-baskerville text-neutral-600 dark:text-neutral-400">
+          Join MindJournal to start your journal!
         </p>
       </div>
 
@@ -66,7 +66,7 @@ const Register = () => {
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+            className="block text-sm font-libre-baskerville font-medium text-neutral-700 dark:text-neutral-300 mb-1"
           >
             Name
           </label>
@@ -81,7 +81,7 @@ const Register = () => {
               required
               value={formData.name}
               onChange={handleChange}
-              className="input pl-10"
+              className="input pl-10 font-lora"
               placeholder="Your name"
             />
           </div>
@@ -90,7 +90,7 @@ const Register = () => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+            className="block text-sm font-libre-baskerville font-medium text-neutral-700 dark:text-neutral-300 mb-1"
           >
             Email
           </label>
@@ -105,7 +105,7 @@ const Register = () => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="input pl-10"
+              className="input pl-10 font-lora"
               placeholder="your@email.com"
             />
           </div>
@@ -114,7 +114,7 @@ const Register = () => {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+            className="block  text-sm font-libre-baskerville font-medium text-neutral-700 dark:text-neutral-300 mb-1"
           >
             Password
           </label>
@@ -148,7 +148,7 @@ const Register = () => {
         <div>
           <label
             htmlFor="confirmPassword"
-            className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+            className="block text-sm font-libre-baskerville font-medium text-neutral-700 dark:text-neutral-300 mb-1"
           >
             Confirm Password
           </label>
@@ -184,14 +184,16 @@ const Register = () => {
         <button
           type="submit"
           disabled={loading}
-          className="btn btn-primary w-full"
+          className="btn btn-primary w-full font-libre-baskerville font-medium"
         >
           {loading ? "Creating account..." : "Create account"}
         </button>
       </form>
 
       <div className="mt-4 text-center">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">or</p>
+        <p className="text-[16px] font-lora font-medium text-neutral-600 dark:text-neutral-400">
+          or
+        </p>
       </div>
 
       <div className="mt-4 flex justify-center">
@@ -203,13 +205,13 @@ const Register = () => {
         />
       </div>
 
-      <div className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
+      <div className="mt-6 text-center text-sm font-libre-baskerville  text-neutral-600 dark:text-neutral-400">
         Already have an account?{" "}
         <Link
           to="/login"
-          className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
+          className="font-lora font-medium text-[14px] text-primary-600 dark:text-primary-400 hover:text-primary-500"
         >
-          Sign in
+          Sign in!
         </Link>
       </div>
     </div>

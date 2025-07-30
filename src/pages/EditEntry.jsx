@@ -15,20 +15,21 @@ const EditEntry = () => {
   if (!entry) {
     return (
       <div className="max-w-2xl mx-auto text-center py-12">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
+        <h1 className="text-2xl font-libre-baskerville font-bold text-neutral-900 dark:text-white mb-4">
           Entry Not Found
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-          The journal entry you are looking for does not exist or has been deleted.
+        <p className="font-libre-baskerville text-neutral-600 dark:text-neutral-400 mb-6">
+          The journal entry you are looking for does not exist or has been
+          deleted.
         </p>
-        <button 
-          onClick={() => navigate('/journal')}
+        <button
+          onClick={() => navigate("/journal")}
           className="btn btn-primary"
         >
           Back to Journal
         </button>
       </div>
-    )
+    );
   }
   
   const handleSubmit = (formData, quote) => {
@@ -47,16 +48,16 @@ const EditEntry = () => {
         >
           <FiArrowLeft size={18} />
         </button>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
+        <h1 className="text-[23px] font-libre-baskerville font-medium text-neutral-900 dark:text-white">
           Edit Entry
         </h1>
       </div>
-      
+
       <div className="card p-6">
         <EntryForm onSubmit={handleSubmit} initialData={entry} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EditEntry
+export default EditEntry;

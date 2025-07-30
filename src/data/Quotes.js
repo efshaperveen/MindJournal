@@ -48,5 +48,15 @@ export const psychologyQuotes = [
   "What doesn't kill you makes you stronger.",
   "Life is not about finding yourself. Life is about creating yourself.",
   "The way to get started is to quit talking and begin doing.",
-  "Believe you can and you're halfway there."
+  "Believe you can and you're halfway there.",
+  "You are doing the best you can. That is enough.",
+  "Take it one step at a time.",
+  "It's okay to not be okay.",
+  "You are not alone.",
+  "Your feelings are valid.",
+  "Healing is not linear.",
+  "You are stronger than your struggles.",
+  "You are worthy of love and kindness.",
+  "It's okay to rest.",
+  "Small steps lead to big progress.",
 ];

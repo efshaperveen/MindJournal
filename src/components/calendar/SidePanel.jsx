@@ -1,16 +1,16 @@
 // components/calendar/SidePanel.jsx
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiX } from 'react-icons/fi'
-import MoodIcon from '../journal/MoodIcon'
-import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from "framer-motion";
+import { FiPlus, FiX } from "react-icons/fi";
+import MoodIcon from "../journal/MoodIcon";
+import { useNavigate } from "react-router-dom";
 
 const SidePanel = ({ isOpen, day, onClose }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  if (!day) return null
+  if (!day) return null;
 
-  const today = new Date()
-  const isToday = day.date.toDateString() === today.toDateString()
+  const today = new Date();
+  const isToday = day.date.toDateString() === today.toDateString();
 
   return (
     <AnimatePresence>
@@ -28,13 +28,15 @@ const SidePanel = ({ isOpen, day, onClose }) => {
           {/* Side Panel */}
           <motion.div
             className="fixed top-0 right-0 h-full w-[400px] max-w-full bg-white dark:bg-neutral-900 shadow-xl z-50 p-6 flex flex-col"
-            initial={{ x: '100%' }}
+            initial={{ x: "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "tween", duration: 0.3 }}
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Journals</h2>
+              <h2 className="text-xl font-libre-baskerville font-medium">
+                Journals
+              </h2>
               <button
                 onClick={onClose}
                 className="text-red-500 hover:text-red-700"
@@ -54,29 +56,33 @@ const SidePanel = ({ isOpen, day, onClose }) => {
                   >
                     <div className="flex items-center space-x-2">
                       <MoodIcon mood={entry.mood} size={18} />
-                      <span className="font-medium truncate">{entry.title}</span>
+                      <span className="font-libre-baskerville font-medium truncate">
+                        {entry.title}
+                      </span>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-neutral-500 text-sm">No entries</p>
+                <p className="font-libre-baskerville text-neutral-500 text-md mt-3">
+                  No entries!
+                </p>
               )}
             </div>
 
             {/* Only show add button for today */}
             {isToday && (
               <button
-                onClick={() => navigate('/journal/new')}
-                className="mt-6 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition"
+                onClick={() => navigate("/journal/new")}
+                className="mt-6 px-28 py-2 space-x-2 font-libre-baskerville text-[15px] bg-primary-500 text-white rounded-md hover:bg-primary-600 transition flex items-center"
               >
-                + New Journal
+                <FiPlus size={15} /> <span> New Journal</span>
               </button>
             )}
           </motion.div>
         </>
       )}
     </AnimatePresence>
-  )
-}
+  );
+};
 
-export default SidePanel
+export default SidePanel;

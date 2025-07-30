@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { psychologyQuotes } from '../../data/Quotes'
+import React, { useState, useEffect } from "react";
+import { psychologyQuotes } from "../../data/Quotes";
 
 const QuoteLoader = () => {
   const [quote, setQuote] = useState(null);
@@ -9,12 +9,10 @@ const QuoteLoader = () => {
     setQuote(psychologyQuotes[randomIndex]);
   }, []);
 
- 
-
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="max-w-3xl mx-auto p-8 text-center">
-        <blockquote className="text-xl md:text-xl lg:text-xl moon-dance-regular italic leading-relaxed">
+        <blockquote className="text-xl md:text-xl lg:text-xl font-libre-baskerville italic leading-relaxed">
           "{quote}"
         </blockquote>
       </div>
