@@ -1,7 +1,8 @@
-import { useState, useMemo, Fragment } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useJournal } from '../contexts/JournalContext';
+import { useState, useMemo, Fragment } from "react";
+import { useNavigate } from "react-router-dom";
+import { useJournal } from "../contexts/JournalContext";
 import {
+ ui-fix
   format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
   addDays, isToday, isSameMonth, parseISO, addMonths, subMonths,
 } from 'date-fns';
@@ -10,9 +11,24 @@ import { motion } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight, FiPlus } from 'react-icons/fi';
 import SidePanel from '../components/calendar/SidePanel';          
 
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  isToday,
+  isSameMonth,
+  parseISO,
+  addMonths,
+  subMonths,
+} from "date-fns";
+import { FiChevronLeft, FiChevronRight, FiPlus } from "react-icons/fi";
+import SidePanel from "../components/calendar/SidePanel";
+main
 
 const Calendar = () => {
-  const { entries, isLoading } = useJournal();
+  const { entries, isLoading, privateEntryIds } = useJournal();
   const navigate = useNavigate();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
@@ -32,9 +48,11 @@ const Calendar = () => {
     let days = [];
     let day = startDate;
 
-    const entriesByDate = entries.reduce((acc, entry) => {
+    const publicEntries = entries.filter(entry => !privateEntryIds.includes(entry.id));
+
+    const entriesByDate = publicEntries.reduce((acc, entry) => {
       const date = parseISO(entry.createdAt);
-      const dateStr = format(date, 'yyyy-MM-dd');
+      const dateStr = format(date, "yyyy-MM-dd");
       if (!acc[dateStr]) acc[dateStr] = [];
       acc[dateStr].push(entry);
       return acc;
@@ -42,7 +60,7 @@ const Calendar = () => {
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
-        const dateStr = format(day, 'yyyy-MM-dd');
+        const dateStr = format(day, "yyyy-MM-dd");
         const dayEntries = entriesByDate[dateStr] || [];
 
         days.push({
@@ -75,12 +93,15 @@ const Calendar = () => {
     return (
       <div className="p-6 animate-fadeIn">
         {/* Skeleton UI as before */}
-        <p className="text-center text-neutral-600 dark:text-neutral-300">Loading...</p>
+        <p className="text-center text-neutral-600 dark:text-neutral-300">
+          Loading...
+        </p>
       </div>
     );
   }
 
   return (
+ ui-fix
     <motion.div
   className="relative flex flex-col lg:flex-row gap-4"
   initial={{ opacity: 0, y: 20 }}
@@ -117,16 +138,19 @@ const Calendar = () => {
           className="p-2 rounded-full bg-gradient-to-tr from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700 hover:shadow-md active:scale-90 transition"
           whileTap={{ scale: 0.9 }}
         >
+
               <FiChevronRight size={20} />
             </motion.button>
           </div>
         </motion.div>
 
         {/* Grid */}
+ ui-fix
         <div className="card overflow-hidden rounded-md shadow-sm">
           <div className="grid grid-cols-7 text-center bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-700 border-b border-neutral-200 dark:border-neutral-700">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
               <div key={day} className="py-2 font-semibold text-neutral-700 dark:text-neutral-300 border-r last:border-r-0 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors duration-200 cursor-default">
+
                 {day}
               </div>
             ))}
@@ -137,13 +161,17 @@ const Calendar = () => {
               <Fragment key={weekIndex}>
                 {week.map((day, dayIndex) => {
                   const isPastOrToday = day.date <= new Date();
-                  const isClickable = (day.entries.length > 0 || day.isToday) && isPastOrToday;
+                  const isClickable =
+                    (day.entries.length > 0 || day.isToday) && isPastOrToday;
 
                   return (
                     <div
                       key={dayIndex}
-                      onClick={isClickable ? () => handleDayClick(day) : undefined}
+                      onClick={
+                        isClickable ? () => handleDayClick(day) : undefined
+                      }
                       className={`group relative min-h-[100px] p-2 border-r border-neutral-200 dark:border-neutral-700 last:border-r-0
+ui-fix
                         ${!day.isCurrentMonth ? 'bg-neutral-50 dark:bg-neutral-900 text-neutral-400 dark:text-neutral-600' : 'bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-800 dark:to-neutral-900'}
                         ${day.isToday ? 'bg-primary-50 dark:bg-primary-900/10 border-2 border-primary-500' : ''}
                         ${isClickable ? 'hover:-translate-y-1 hover:shadow-md hover:bg-primary-100 dark:hover:bg-primary-900 cursor-pointer' : 'cursor-default'}
@@ -166,6 +194,7 @@ const Calendar = () => {
                         className="p-2 rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-primary-500 hover:text-white dark:hover:bg-primary-500 shadow-sm transition-all"
                          whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
+
                           >
                         <FiPlus size={14} />
                         </motion.button>
@@ -174,8 +203,10 @@ const Calendar = () => {
 
                       {day.entries.length > 0 && (
                         <div className="mt-2 flex justify-center">
+ ui-fix
                           <div className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold shadow-sm hover:brightness-110 transition-all duration-200">
                             {day.entries.length} {day.entries.length === 1 ? 'Entry' : 'Entries'}
+
                           </div>
                         </div>
                       )}

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@react-oauth/google": "^0.12.2",
     "axios": "^1.11.0",
     "chart.js": "^4.4.1",
     "date-fns": "^3.6.0",
@@ -17,13 +19,19 @@
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "framer-motion": "^12.23.6",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.525.0",
     "marked": "^16.1.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "react-tooltip": "^5.29.1",
+    "recharts": "^3.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
@@ -44,5 +52,9 @@
   "main": "eslint.config.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "overrides": {
+    "rollup": "4.18.0",
+    "esbuild": "0.21.4"
+  }
 }
