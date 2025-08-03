@@ -1,16 +1,11 @@
-import { useState, useMemo, Fragment } from 'react';
+import {useState,useMemo,Fragment} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useJournal } from '../contexts/JournalContext';
-import {
-  format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
-  addDays, isToday, isSameMonth, parseISO, addMonths, subMonths,
-} from 'date-fns';
-import { motion } from 'framer-motion';
-
-import { FiChevronLeft, FiChevronRight, FiPlus } from 'react-icons/fi';
-import SidePanel from '../components/calendar/SidePanel';          
-
-
+import {useJournal} from '../contexts/JournalContext';
+import{
+  format,startOfMonth,endOfMonth,startOfWeek,endOfWeek,addDays,isToday,isSameMonth,parseISO,addMonths,subMonths} from 'date-fns';
+import {motion} from 'framer-motion';
+import {FiChevronLeft,FiChevronRight,FiPlus} from 'react-icons/fi';
+import SidePanel from '..components/calendar/SidePanel';
 const Calendar = () => {
   const { entries, isLoading } = useJournal();
   const navigate = useNavigate();
