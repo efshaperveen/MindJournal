@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight, FiPlus } from 'react-icons/fi';
 import SidePanel from '../components/calendar/SidePanel';          
 
+import {
   format,
   startOfMonth,
   endOfMonth,
@@ -20,8 +21,9 @@ import SidePanel from '../components/calendar/SidePanel';
   isSameMonth,
   parseISO,
   addMonths,
-  subMonths,
+  subMonths
 } from "date-fns";
+
 import { FiChevronLeft, FiChevronRight, FiPlus } from "react-icons/fi";
 import SidePanel from "../components/calendar/SidePanel";
 main
