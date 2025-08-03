@@ -8,7 +8,8 @@ import {
 import { motion } from 'framer-motion';
 
 import { FiChevronLeft, FiChevronRight, FiPlus } from 'react-icons/fi';
-import SidePanel from '../components/calendar/SidePanel';
+import SidePanel from '../components/calendar/SidePanel';          
+
 
 const Calendar = () => {
   const { entries, isLoading } = useJournal();
