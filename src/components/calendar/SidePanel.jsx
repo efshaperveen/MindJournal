@@ -1,16 +1,16 @@
 // components/calendar/SidePanel.jsx
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiX } from 'react-icons/fi'
-import MoodIcon from '../journal/MoodIcon'
-import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from "framer-motion";
+import { FiPlus, FiX } from "react-icons/fi";
+import MoodIcon from "../journal/MoodIcon";
+import { useNavigate } from "react-router-dom";
 
 const SidePanel = ({ isOpen, day, onClose }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  if (!day) return null
+  if (!day) return null;
 
-  const today = new Date()
-  const isToday = day.date.toDateString() === today.toDateString()
+  const today = new Date();
+  const isToday = day.date.toDateString() === today.toDateString();
 
   return (
     <AnimatePresence>
@@ -27,6 +27,7 @@ const SidePanel = ({ isOpen, day, onClose }) => {
 
           {/* Side Panel */}
           <motion.div
+ ui-futuristic-enhancements
             className="fixed top-0 right-0 h-full w-[400px] max-w-full bg-white dark:bg-neutral-900 shadow-2xl border-l border-neutral-200 dark:border-neutral-800 z-50 p-6 flex flex-col"
             initial={{ x: '100%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -40,6 +41,7 @@ const SidePanel = ({ isOpen, day, onClose }) => {
             transition={{ delay: 0.2 }}
             >
               <h2 className="text-xl font-bold">Journals</h2>
+
               <button
                 onClick={onClose}
                 className="text-red-500 hover:text-red-600 active:scale-95 transition-transform duration-150"
@@ -49,6 +51,7 @@ const SidePanel = ({ isOpen, day, onClose }) => {
             </motion.div>
 
             {/* Entries List */}
+ ui-futuristic-enhancements
             <motion.div className="flex-1 overflow-y-auto space-y-4">
   {day?.entries?.length > 0 ? (
     <motion.div
@@ -100,11 +103,12 @@ const SidePanel = ({ isOpen, day, onClose }) => {
   </motion.button>
 )}
 
+
           </motion.div>
         </>
       )}
     </AnimatePresence>
-  )
-}
+  );
+};
 
-export default SidePanel
+export default SidePanel;

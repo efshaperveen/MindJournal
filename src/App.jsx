@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import { useTheme } from './contexts/ThemeContext'
+import { Toaster } from 'react-hot-toast'
 
 // Layouts
 import MainLayout from './layouts/MainLayout'
@@ -16,10 +17,10 @@ import EditEntry from './pages/EditEntry'
 import Calendar from './pages/Calendar'
 import Stats from './pages/Stats'
 import Settings from './pages/Settings'
+import PrivateVault from './pages/PrivateVault'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import NotFound from './pages/NotFound'
-
 import MindChat from './pages/MindChat'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -46,9 +47,11 @@ function App() {
   }, [theme])
 
   return (
-    <Routes>
-      {/* Auth routes */}
-      <Route path="/" element={<AuthLayout />}>
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      <Routes>
+        {/* Auth routes */}
+        <Route path="/" element={<AuthLayout />}>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword/>}/>
@@ -69,13 +72,14 @@ function App() {
         <Route path="calendar" element={<Calendar />} />
         <Route path="stats" element={<Stats />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="private-vault" element={<PrivateVault />} />
         <Route path='mindchat' element={<MindChat/>}/>
       </Route>
       
       {/* 404 route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
- 
+    </>
   )
 }
 
