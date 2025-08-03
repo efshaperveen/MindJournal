@@ -207,37 +207,37 @@ const Stats = () => {
   return (
     <div className="space-y-6 animate-fadeIn">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white">
+        <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-indigo-500">
           Insights
         </h1>
         
-        <div className="inline-flex rounded-md shadow-sm" role="group">
+        <div className="inline-flex rounded-md shadow-sm border border-neutral-300 dark:border-neutral-700 overflow-hidden" role="group">
           <button
             onClick={() => setTimeRange('week')}
-            className={`px-4 py-2 text-sm font-medium rounded-l-md border ${
+            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
               timeRange === 'week'
-                ? 'bg-primary-600 text-white border-primary-600'
-                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-750'
-            }`}
+                ? 'bg-primary-600 text-white shadow-inner'
+                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+            } rounded-l-md border-r border-neutral-300 dark:border-neutral-700`}
           >
             This Week
           </button>
           <button
             onClick={() => setTimeRange('month')}
-            className={`px-4 py-2 text-sm font-medium border-t border-b ${
+            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
               timeRange === 'month'
-                ? 'bg-primary-600 text-white border-primary-600'
-                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-750'
-            }`}
+                ? 'bg-primary-600 text-white  shadow-inner'
+                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+            } border-r border-neutral-300 dark:border-neutral-700`}
           >
             This Month
           </button>
           <button
             onClick={() => setTimeRange('all')}
-            className={`px-4 py-2 text-sm font-medium rounded-r-md border ${
+            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
               timeRange === 'all'
-                ? 'bg-primary-600 text-white border-primary-600'
-                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-750'
+                ? 'bg-primary-600 text-white shadow-inner'
+                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
             }`}
           >
             All Time
@@ -246,8 +246,8 @@ const Stats = () => {
       </div>
       
       {filteredEntries.length === 0 ? (
-        <div className="card p-8 text-center">
-          <h2 className="text-lg font-medium text-neutral-800 dark:text-white mb-2">
+        <div className="card p-8 text-center bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold text-neutral-800 dark:text-white mb-2">
             No data available
           </h2>
           <p className="text-neutral-600 dark:text-neutral-400">
@@ -256,11 +256,11 @@ const Stats = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="card p-4 h-[300px]">
+          <div className="card p-4 h-[300px] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
             {moodData && <Pie data={moodData} options={pieOptions} />}
           </div>
           
-          <div className="card p-4 h-[300px]">
+          <div className="card p-4 h-[300px] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
             {activityData ? (
               <Bar data={activityData} options={barOptions} />
             ) : (
@@ -273,17 +273,17 @@ const Stats = () => {
           </div>
           
           <div className="card p-6 lg:col-span-2">
-            <h2 className="text-lg font-medium mb-4">Journal Stats</h2>
+            <h2 className="text-lg font-semibold text-neutral-800 dark:text-white mb-4">Journal Stats</h2>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+              <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="text-sm text-neutral-600 dark:text-neutral-400">Total Entries</div>
-                <div className="text-3xl font-semibold text-primary-700 dark:text-primary-400">{filteredEntries.length}</div>
+                <div className="text-3xl font-bold text-primary-700 dark:text-primary-400">{filteredEntries.length}</div>
               </div>
               
-              <div className="p-4 bg-secondary-50 dark:bg-secondary-900/20 rounded-lg">
+              <div className="p-4 bg-secondary-50 dark:bg-secondary-900/20 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="text-sm text-neutral-600 dark:text-neutral-400">Average Mood</div>
-                <div className="text-3xl font-semibold text-secondary-700 dark:text-secondary-400">
+                <div className="text-3xl font-bold text-secondary-700 dark:text-secondary-400">
                   {filteredEntries.some(e => e.mood) 
                     ? (() => {
                         const moodScore = {
@@ -307,9 +307,9 @@ const Stats = () => {
                 </div>
               </div>
               
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="text-sm text-neutral-600 dark:text-neutral-400">Most Common Mood</div>
-                <div className="text-3xl font-semibold text-green-700 dark:text-green-400">
+                <div className="text-3xl font-bold text-green-700 dark:text-green-400">
                   {filteredEntries.some(e => e.mood)
                     ? (() => {
                         const moodCounts = filteredEntries.reduce((acc, entry) => {
@@ -331,9 +331,9 @@ const Stats = () => {
                 </div>
               </div>
               
-              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="text-sm text-neutral-600 dark:text-neutral-400">Most Active Day</div>
-                <div className="text-3xl font-semibold text-yellow-700 dark:text-yellow-400">
+                <div className="text-3xl font-bold text-yellow-700 dark:text-yellow-400">
                   {filteredEntries.length > 0
                     ? (() => {
                         const dayCounts = filteredEntries.reduce((acc, entry) => {
