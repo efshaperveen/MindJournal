@@ -21,18 +21,23 @@ const ForgotPassword = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">Forgot Password</h2>
+      <h2 className="text-xl font-libre-baskerville font-semibold mb-4">
+        Forgot Password
+      </h2>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Enter your email"
-          className="input w-full mb-2"
+          className="input w-full mb-2 font-libre-baskerville"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button type="submit" className="btn btn-primary w-full">
+        <button
+          type="submit"
+          className="btn btn-primary w-full font-libre-baskerville font-bold"
+        >
           Continue
         </button>
       </form>
