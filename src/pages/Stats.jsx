@@ -301,7 +301,6 @@ calendar-ui-fix
       </div>
 
       {filteredEntries.length === 0 ? (
- calendar-ui-fix
         <div className="card p-8 text-center bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm">
           <h2 className="text-lg font-semibold text-neutral-800 dark:text-white mb-2">
             No data available
