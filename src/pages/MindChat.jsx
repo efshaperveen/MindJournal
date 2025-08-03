@@ -68,7 +68,6 @@ function MindChat() {
   }, [messages]);
 
   return (
- ui-fix
     <div className="flex flex-col h-[80vh] max-w-2xl mx-auto mt-8 rounded-xl shadow-lg bg-[#1e1e1e] border border-[#2c2c2c] overflow-hidden">
       <div className="p-4 text-lg font-semibold text-teal-400 border-b border-[#2c2c2c]">
          <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">MindBot-AI Chat</span>
