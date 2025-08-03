@@ -2,7 +2,6 @@ import { useState, useMemo, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { useJournal } from "../contexts/JournalContext";
 import {
- ui-fix
   format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
   addDays, isToday, isSameMonth, parseISO, addMonths, subMonths,
 } from 'date-fns';
