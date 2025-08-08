@@ -81,7 +81,7 @@ const MoodTracker = () => {
               [dayInfo.id]: nextIdx,
             };
           });
-        }, 3000); // Changed to 3 seconds (3000ms) for slower transition
+        }, 3000);
         slideshowIntervalsRef.current[dayInfo.id] = intervalId;
       }
     });
@@ -148,8 +148,8 @@ const MoodTracker = () => {
   );
 
   return (
-    <div className="card">
-      <div className="px-4 pt-4 pb-2">
+    <div className="p-6 rounded-2xl shadow-lg bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md border border-white/20 dark:border-neutral-700/50 hover:shadow-xl hover:scale-[1.01] transition-all duration-300">
+      <div className="px-2 pt-2 pb-2">
         <h2 className="font-lora text-xl font-semibold">Mood Tracker</h2>
         <p className="font-lora font-medium text-md text-neutral-500 dark:text-neutral-400">
           Last 7 days
@@ -195,7 +195,6 @@ const MoodTracker = () => {
               </div>
 
               <button
-                // Removed transition-all and kept transition-colors for background changes
                 className={`w-10 h-10 mt-1 rounded-full flex items-center justify-center transition-colors relative ${
                   dayInfo.hasEntry
                     ? getMoodColor(displayMood) + " cursor-pointer"
@@ -204,7 +203,6 @@ const MoodTracker = () => {
               >
                 {dayInfo.hasEntry ? (
                   <>
-                    {/* Wrapper div for icon fade transition */}
                     <div
                       key={displayMood}
                       className="transition-opacity duration-500 ease-in-out"
@@ -228,12 +226,11 @@ const MoodTracker = () => {
                 {dayInfo.formattedDate}
               </div>
 
-              {/* Moods Popover */}
               {activeMoodPopoverId === dayInfo.id &&
                 dayInfo.hasEntry &&
                 dayInfo.additionalMoodCount > 0 && (
                   <div
-                    className="absolute z-10 top-full mt-2 bg-white dark:bg-neutral-800 p-2 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 flex flex-wrap gap-1 justify-center min-w-[120px]"
+                    className="absolute z-10 top-full mt-2 bg-white/80 dark:bg-neutral-800/80 backdrop-blur-md p-2 rounded-lg shadow-lg border border-neutral-200/50 dark:border-neutral-700/50 flex flex-wrap gap-1 justify-center min-w-[120px]"
                     onClick={(e) => e.stopPropagation()}
                     onMouseEnter={() => handleMouseEnter(dayInfo.id)}
                     onMouseLeave={handleMouseLeave}
@@ -265,8 +262,7 @@ const MoodTracker = () => {
         })}
       </div>
 
-      {/* Conditional button for adding entries */}
-      <div className="p-4 pt-2 border-t border-neutral-200 dark:border-neutral-700 mt-2">
+      <div className="p-4 pt-2 border-t border-white/20 dark:border-neutral-700/50 mt-2">
         <button
           onClick={handleCreateEntry}
           className="font-lora font-light btn btn-outline w-full flex items-center justify-center space-x-2"
