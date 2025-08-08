@@ -59,17 +59,17 @@ const Heatmap = () => {
   const getMoodColor = (mood) => {
     switch (mood) {
       case "great":
-        return "bg-emerald-500 dark:bg-emerald-400";
+        return "bg-emerald-500/80";
       case "good":
-        return "bg-blue-500 dark:bg-blue-400";
+        return "bg-blue-500/80";
       case "okay":
-        return "bg-slate-400 dark:bg-slate-500";
+        return "bg-slate-400/80";
       case "bad":
-        return "bg-amber-500 dark:bg-amber-400";
+        return "bg-amber-500/80";
       case "awful":
-        return "bg-rose-500 dark:bg-rose-400";
+        return "bg-rose-500/80";
       default:
-        return "bg-gray-200 dark:bg-gray-700";
+        return "bg-gray-200/50";
     }
   };
 
@@ -166,15 +166,15 @@ const Heatmap = () => {
   };
 
   return (
-    <div className="w-full p-4 sm:p-6 bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 animate-fadeIn">
+    <div className="w-full p-6 bg-white/40 dark:bg-neutral-800/40 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 dark:border-neutral-700/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
         <div className="flex items-start sm:items-center gap-3">
-          <div className="p-2 bg-primary-100 dark:bg-primary-800 text-primary-900 dark:text-primary-100 rounded-lg">
+          <div className="p-3 bg-gradient-to-br from-green-200/60 to-green-400/60 dark:from-green-700/50 dark:to-green-900/50 text-green-900 dark:text-green-100 rounded-xl shadow-inner">
             <FiTrendingUp size={20} />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-lora font-semibold text-neutral-900 dark:text-white">
+            <h2 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white">
               Mood Heatmap
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400 text-sm sm:text-base">
@@ -188,7 +188,7 @@ const Heatmap = () => {
           <div className="relative">
             <button
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-              className="flex items-center space-x-2 px-3 py-2 text-sm bg-neutral-50 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-600 border w-full sm:w-auto"
+              className="flex items-center space-x-2 px-3 py-2 text-sm bg-white/50 dark:bg-neutral-700/50 backdrop-blur-sm border border-white/20 dark:border-neutral-600 rounded-xl hover:scale-105 transition-transform shadow-sm"
             >
               <FiCalendar size={14} />
               <span>{filter.charAt(0).toUpperCase() + filter.slice(1)}</span>
@@ -200,7 +200,7 @@ const Heatmap = () => {
               />
             </button>
             {showFilterDropdown && (
-              <div className="absolute right-0 top-full mt-1 bg-white dark:bg-neutral-800 border rounded-lg shadow-lg z-10">
+              <div className="absolute right-0 top-full mt-1 bg-white/80 dark:bg-neutral-800/80 backdrop-blur-sm border border-white/20 dark:border-neutral-700 rounded-xl shadow-lg z-10">
                 {["week", "month", "year"].map((option) => (
                   <button
                     key={option}
@@ -208,7 +208,7 @@ const Heatmap = () => {
                       setFilter(option);
                       setShowFilterDropdown(false);
                     }}
-                    className={`block w-full px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-700 ${
+                    className={`block w-full px-3 py-2 text-sm hover:bg-white/40 dark:hover:bg-neutral-700/40 transition ${
                       filter === option ? "text-green-600 font-medium" : ""
                     }`}
                   >
@@ -220,17 +220,17 @@ const Heatmap = () => {
           </div>
           <button
             onClick={navigatePrevious}
-            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            className="p-2 rounded-xl bg-white/40 dark:bg-neutral-700/40 hover:scale-105 transition shadow-sm"
           >
             <FiChevronLeft size={16} />
           </button>
-          <div className="px-3 py-1 bg-neutral-50 dark:bg-neutral-700 rounded-lg text-xs sm:text-sm font-medium">
+          <div className="px-3 py-1 bg-white/50 dark:bg-neutral-700/50 backdrop-blur-sm rounded-xl text-xs sm:text-sm font-medium border border-white/20">
             {getCurrentSelection()}
           </div>
           <button
             onClick={navigateNext}
             disabled={filter === "week" && selectedWeek === 0}
-            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50"
+            className="p-2 rounded-xl bg-white/40 dark:bg-neutral-700/40 hover:scale-105 transition shadow-sm disabled:opacity-50"
           >
             <FiChevronRight size={16} />
           </button>
@@ -242,10 +242,10 @@ const Heatmap = () => {
         {["great", "good", "okay", "bad", "awful"].map((mood) => (
           <div
             key={mood}
-            className="rounded-lg p-3 border border-neutral-200 dark:border-neutral-700"
+            className="rounded-2xl p-3 border border-white/20 dark:border-neutral-700/30 bg-white/40 dark:bg-neutral-800/40 backdrop-blur-sm hover:scale-105 hover:shadow-lg transition"
           >
             <div className="flex items-center space-x-2 mb-1">
-              <div className={`w-2 h-2 rounded-full ${getMoodColor(mood)}`}></div>
+              <div className={`w-3 h-3 rounded-full ${getMoodColor(mood)}`} />
               <span className="text-xs text-neutral-600 dark:text-neutral-400">
                 {getMoodLabel(mood)}
               </span>
@@ -292,7 +292,7 @@ const Heatmap = () => {
                 <div
                   data-tooltip-id={`tooltip-${day.dateString}`}
                   data-tooltip-html={tooltipContent}
-                  className={`absolute inset-0 rounded-sm cursor-pointer transition-shadow hover:shadow-lg hover:z-20 ${getMoodColor(
+                  className={`absolute inset-0 rounded-sm cursor-pointer transition-transform hover:scale-110 ${getMoodColor(
                     day.mood
                   )}`}
                 >
@@ -310,11 +310,11 @@ const Heatmap = () => {
       {/* Color Legend */}
       <div className="flex flex-wrap justify-center mt-4 gap-4">
         {[
-          { label: "Great", color: "bg-emerald-500 dark:bg-emerald-400" },
-          { label: "Good", color: "bg-blue-500 dark:bg-blue-400" },
-          { label: "Okay", color: "bg-slate-400 dark:bg-slate-500" },
-          { label: "Bad", color: "bg-amber-500 dark:bg-amber-400" },
-          { label: "Awful", color: "bg-rose-500 dark:bg-rose-400" },
+          { label: "Great", color: "bg-emerald-500/80" },
+          { label: "Good", color: "bg-blue-500/80" },
+          { label: "Okay", color: "bg-slate-400/80" },
+          { label: "Bad", color: "bg-amber-500/80" },
+          { label: "Awful", color: "bg-rose-500/80" },
         ].map((item) => (
           <div key={item.label} className="flex items-center space-x-2">
             <div className={`w-4 h-4 rounded-sm ${item.color}`} />
