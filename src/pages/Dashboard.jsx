@@ -35,9 +35,23 @@ const Dashboard = () => {
 
   return (
     <div className="calming-bg min-h-screen space-y-6 animate-fadeIn">
+      <style jsx>{`
+        @keyframes wave {
+          0%, 100% { transform: rotate(0deg); }
+          10%, 30%, 50%, 70% { transform: rotate(14deg); }
+          20%, 40%, 60%, 80% { transform: rotate(-8deg); }
+        }
+        .wave-animation {
+          animation: wave 2.5s ease-in-out infinite;
+          transform-origin: 70% 70%;
+          display: inline-block;
+        }
+      `}</style>
+      
       <div>
         <h1 className="text-2xl md:text-3xl font-libre-baskerville font-bold text-neutral-900 dark:text-white">
           Welcome, {user.name}
+          <span className="ml-2 wave-animation">👋</span>
         </h1>
         <p className="font-lora text-[18px] text-neutral-600 dark:text-neutral-400 mt-1">
           {currentDate}
