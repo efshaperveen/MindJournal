@@ -200,7 +200,7 @@ const Heatmap = () => {
               />
             </button>
             {showFilterDropdown && (
-              <div className="absolute right-0 top-full mt-1 bg-white dark:bg-neutral-800 border rounded-lg shadow-lg z-10">
+              <div className="absolute right-0 top-full mt-1 glass-card border border-neutral-200/50 dark:border-neutral-700/50 rounded-xl shadow-lg z-10 min-w-[120px]">
                 {["week", "month", "year"].map((option) => (
                   <button
                     key={option}
@@ -208,8 +208,8 @@ const Heatmap = () => {
                       setFilter(option);
                       setShowFilterDropdown(false);
                     }}
-                    className={`block w-full px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-700 ${
-                      filter === option ? "text-green-600 font-medium" : ""
+                    className={`block w-full px-4 py-3 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors duration-200 ${
+                      filter === option ? "text-primary-600 dark:text-primary-400 font-semibold bg-primary-50 dark:bg-primary-900/20" : ""
                     }`}
                   >
                     {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -220,17 +220,17 @@ const Heatmap = () => {
           </div>
           <button
             onClick={navigatePrevious}
-            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200"
           >
             <FiChevronLeft size={16} />
           </button>
-          <div className="px-3 py-1 bg-neutral-50 dark:bg-neutral-700 rounded-lg text-xs sm:text-sm font-medium">
+          <div className="px-3 py-1 bg-white/50 dark:bg-neutral-800/50 rounded-lg text-xs sm:text-sm font-medium text-neutral-700 dark:text-neutral-200">
             {getCurrentSelection()}
           </div>
           <button
             onClick={navigateNext}
             disabled={filter === "week" && selectedWeek === 0}
-            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50"
+            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50 text-neutral-700 dark:text-neutral-200"
           >
             <FiChevronRight size={16} />
           </button>
