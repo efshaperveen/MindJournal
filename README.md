@@ -1,207 +1,175 @@
-# MindJournal - Professional Mental Wellness Platform
 
-A modern, beautifully designed mental wellness journaling application with advanced UI/UX features, professional color schemes, and smooth animations.
+# 🧠 MindJournal – A Mental Health Journal & Mood Tracker
 
-## ✨ New Design Features
-
-### 🎨 Professional Color Scheme
-- **Primary Colors**: Modern blue gradient (#0ea5e9 to #0284c7)
-- **Secondary Colors**: Elegant purple gradient (#d946ef to #c026d3)
-- **Accent Colors**: Warm orange gradient (#ed7514 to #de5a0a)
-- **Semantic Colors**: Success (green), Warning (yellow), Error (red)
-- **Neutral Palette**: Professional grays for text and backgrounds
-
-### 🌟 Advanced Visual Effects
-
-#### Glass Morphism
-- Translucent backgrounds with backdrop blur effects
-- Subtle borders and shadows for depth
-- Professional card designs with glass-like appearance
-
-#### Smooth Animations
-- **Fade In/Out**: Smooth opacity transitions
-- **Slide Animations**: Left, right, up, down entrance effects
-- **Scale Animations**: Hover and click scaling effects
-- **Floating Elements**: Gentle floating animations for decorative elements
-- **Pulse Effects**: Attention-grabbing pulse animations
-- **Loading Spinners**: Custom animated loading indicators
-
-#### Interactive Elements
-- **Hover Effects**: Scale, shadow, and color transitions
-- **Button Animations**: Shimmer effects and gradient transitions
-- **Card Interactions**: Elevation and glow effects on hover
-- **Navigation**: Smooth slide and scale transitions
-
-### 🎯 Enhanced Components
-
-#### Dashboard
-- **Hero Section**: Glass morphism welcome card with gradient text
-- **Stats Cards**: Floating stat displays with hover effects
-- **Status Indicators**: Animated status dots and progress bars
-- **Quick Actions**: Floating action button with glow effects
-
-#### Sidebar
-- **User Profile**: Enhanced profile card with avatar and status
-- **Navigation**: Smooth hover animations and active state indicators
-- **Theme Toggle**: Professional toggle with glass morphism
-- **Version Info**: Clean footer with version display
-
-#### Affirmation Banner
-- **Quote Display**: Elegant quote presentation with decorative quotes
-- **Refresh Animation**: Smooth spin animation on refresh
-- **Interactive Elements**: Hover effects and status indicators
-
-#### Loading Screen
-- **Branded Loading**: Professional logo and loading animation
-- **Quote Integration**: Inspirational quotes during loading
-- **Progress Indicators**: Animated progress bars and dots
-- **Background Effects**: Floating decorative elements
-
-### 🎨 Design System Features
-
-#### Typography
-- **Gradient Text**: Beautiful gradient text effects for headings
-- **Font Hierarchy**: Professional font sizing and weights
-- **Custom Fonts**: Inter, Lora, Libre Baskerville, and Moon Dance
-
-#### Shadows & Effects
-- **Soft Shadows**: Subtle depth for cards and elements
-- **Glow Effects**: Colored glow effects for interactive elements
-- **Gradient Borders**: Beautiful gradient border effects
-- **Backdrop Blur**: Modern glass morphism effects
-
-#### Responsive Design
-- **Mobile-First**: Optimized for all screen sizes
-- **Adaptive Layouts**: Flexible grid systems
-- **Touch-Friendly**: Optimized touch targets and interactions
-
-### 🚀 Performance Optimizations
-
-#### Smooth Scrolling
-- **CSS Scroll Behavior**: Smooth scrolling throughout the app
-- **Custom Scrollbars**: Styled scrollbars with gradient effects
-- **Scroll Animations**: Elements animate on scroll
-
-#### Animation Performance
-- **CSS Transforms**: Hardware-accelerated animations
-- **Optimized Keyframes**: Efficient animation definitions
-- **Reduced Motion**: Respects user's motion preferences
-
-### 🎨 Color Palette
-
-```css
-/* Primary Colors */
---primary-50: #f0f9ff;
---primary-500: #0ea5e9;
---primary-600: #0284c7;
---primary-900: #0c4a6e;
-
-/* Secondary Colors */
---secondary-50: #fdf4ff;
---secondary-500: #d946ef;
---secondary-600: #c026d3;
---secondary-900: #701a75;
-
-/* Accent Colors */
---accent-50: #fef7ee;
---accent-500: #ed7514;
---accent-600: #de5a0a;
---accent-900: #772f12;
-
-/* Semantic Colors */
---success-500: #22c55e;
---warning-500: #f59e0b;
---error-500: #ef4444;
-```
-
-### 🎯 Usage Examples
-
-#### Glass Morphism Cards
-```jsx
-<div className="glass-card p-6 rounded-2xl border-gradient">
-  <h2 className="text-xl font-bold gradient-text">Card Title</h2>
-  <p className="text-neutral-700 dark:text-neutral-200">Card content</p>
-</div>
-```
-
-#### Animated Buttons
-```jsx
-<button className="btn btn-primary scale-in-hover">
-  Click Me
-</button>
-```
-
-#### Gradient Text
-```jsx
-<h1 className="text-3xl font-bold gradient-text">
-  Beautiful Heading
-</h1>
-```
-
-#### Floating Elements
-```jsx
-<div className="animate-float">
-  Floating content
-</div>
-```
-
-## 🛠️ Technical Implementation
-
-### CSS Architecture
-- **CSS Variables**: Centralized color and design tokens
-- **Tailwind CSS**: Utility-first styling with custom extensions
-- **Component Classes**: Reusable design system classes
-- **Animation Classes**: Predefined animation utilities
-
-### Browser Support
-- **Modern Browsers**: Full support for all features
-- **Fallbacks**: Graceful degradation for older browsers
-- **Progressive Enhancement**: Core functionality works everywhere
-
-### Accessibility
-- **Focus States**: Clear focus indicators
-- **Color Contrast**: WCAG AA compliant color ratios
-- **Motion Preferences**: Respects user's motion settings
-- **Screen Readers**: Proper semantic markup
-
-## 🎨 Design Principles
-
-1. **Professional**: Clean, modern, and trustworthy appearance
-2. **Accessible**: Inclusive design for all users
-3. **Performant**: Smooth animations and fast interactions
-4. **Consistent**: Unified design language throughout
-5. **Emotional**: Warm and inviting mental wellness experience
-
-## 🚀 Getting Started
-
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Start development server: `npm run dev`
-4. Experience the beautiful new design system!
-
-## 📱 Features
-
-- **Journal Entries**: Create, edit, and manage personal journal entries
-- **Mood Tracking**: Visual mood tracking with charts and analytics
-- **Private Vault**: Secure storage for sensitive entries
-- **AI Chat**: Intelligent conversation with MindBot-AI
-- **Gratitude Practice**: Daily gratitude journaling
-- **Calendar View**: Visual calendar with entry history
-- **Analytics**: Insights and statistics about your journaling journey
-- **Dark/Light Mode**: Beautiful theme switching
-- **Responsive Design**: Works perfectly on all devices
-
-## 🎯 Future Enhancements
-
-- **Advanced Animations**: More sophisticated motion design
-- **Custom Themes**: User-customizable color schemes
-- **Micro-interactions**: Enhanced interactive feedback
-- **Performance**: Further optimization for smooth animations
-- **Accessibility**: Enhanced accessibility features
+MindJournal is a fully responsive and modern web application built with React.js and Vite, designed to help users log their thoughts, track daily moods, and gain insights into their mental well-being.
 
 ---
 
-**MindJournal** - Where beautiful design meets mental wellness. ✨
+## 🚀 Features
 
+- **User Authentication:** Secure login and registration system using GoogleAuth and Context API for session management.
+- **Dashboard Overview:** A centralized dashboard displaying recent journal entries, current mood status, a quick mood chart, and an integrated **Heatmap Visualization** — an interactive, color-coded view of mood trends with a dropdown to filter by Week, Month, or Year.
+- **Mood Tracker & Visual Insights:**
+  - Log daily moods with emoji-based selection.
+  - View interactive charts powered by Recharts for mood trends over time.
+  - Explore detailed mood analytics on the Insights page.
+- **Calendar View:** Navigate past journal entries and moods using an interactive calendar component.
+- **Journal Entry Management (CRUD):**
+  - Create, edit, view, and delete personal journal entries.
+  - Clean UI for daily reflections and personal notes.
+- **Gratitude Journal:**
+  - A new page for users to record 3 things they’re grateful for daily.
+  - Data is stored locally for privacy. Accessible from the main navigation.
+- **Insights & Analytics Page:**  
+  - Visualize mood trends over **Week, Month, or Year** using interactive **Pie Charts, Bar Charts for   better   tracking of your mental well-being.
+- **Settings Page:**
+  - Manage user preferences.
+  - Toggle between Dark and Light themes.
+- **MindBot AI:**
+  - An AI-powered chatbot for personalized mental health journaling support.
+  - Suggests reflection prompts, coping strategies, and mood improvement tips.
+- **Theme Support:** Responsive dark/light mode with Context-based toggle.
+- **Navigation:** Smooth and intuitive routing with React Router.
+- **Modern UI/UX:**
+  - Built using Tailwind CSS.
+  - Consistent styling with reusable components.
+  - Smooth scrolling for seamless navigation.
+  - Hover effects and interactive animations for enhanced user experience.
+  - Responsive design optimized for all devices.
+- **Clean Architecture:**
+  - Modular React component structure.
+  - Efficient use of React Hooks and Context API for state and theme management.
 
 ---
+
+## 📚 Table of Contents
+
+- [🚀 Features](#-features)
+- [🛠 Tech Stack](#-tech-stack)
+- [💻 Installation](#-installation)
+- [📖 Usage](#-usage)
+- [📁 Folder Structure](#-folder-structure)
+- [📸 Demo](#-demo)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** React.js, Vite
+- **Styling:** Tailwind CSS
+- **State Management:** Context API, React Hooks
+- **Routing:** React Router
+- **Charts:** Recharts
+- **Icons:** React Icons
+- **Backend:** Node.js, Express.js
+
+---
+
+## 💻 Installation
+
+**Prerequisites**
+- Node.js (v14 or higher)
+- npm or yarn
+
+**Steps**
+```bash
+git clone https://github.com/your-username/MindJournal.git
+cd MindJournal
+npm install
+npm run dev
+````
+
+Visit [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## 📖 Usage
+
+1. Log in or register to create an account.
+2. Use the dashboard to quickly view mood status and past entries.
+3. Navigate to the calendar to see or edit past logs.
+4. Head to the Insights page to visualize mood trends.
+5. Switch between light/dark themes from the Settings tab.
+
+---
+
+## 📁 Folder Structure
+
+```plaintext
+MindJournal/
+├── Backend
+├── public/               # Static files
+├── src/
+│   ├── components/       # Reusable components
+│   │   ├── calendar/     # Calendar view
+│   │   ├── common/       # Shared UI elements (e.g., ThemeToggle)
+│   │   ├── dashboard/    # Dashboard widgets
+│   │   └── ...           
+│   ├── App.jsx           # Main app component
+│   ├── main.jsx          # Entry point
+│   ├── App.css, index.css
+├── index.html
+├── tailwind.config.js
+├── vite.config.js
+└── README.md
+```
+
+---
+
+## 📸 Demo
+
+Here are some screenshots of MindJournal in action:
+
+ <img src="public/demo1.jpg" width="300"> &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; <img src="public/demo2.jpg" width="300"> <br><br>
+ <img src="public/demo3.jpg" width="300"> &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; <img src="public/demo4.jpg" width="300"> <br><br>
+
+---
+
+## 🤝 Contributing
+
+We welcome all kinds of contributions!
+
+### How to Contribute
+
+1. Fork the repository.
+2. Create your branch:
+
+   ```bash
+   git checkout -b feature-name
+   ```
+3. Make your changes.
+4. Commit your changes:
+
+   ```bash
+   git commit -m "Add feature"
+   ```
+5. Push to the branch:
+
+   ```bash
+   git push origin feature-name
+   ```
+6. Submit a Pull Request.
+
+Please refer to our `CONTRIBUTION.md` for detailed guidelines.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+You’re free to use, modify, and share under the license terms.
+
+---
+
+## 🙏 Acknowledgments
+
+* Inspired by mental wellness tools like Daylio, Moodpath, and Reflectly
+* Built using open-source tools and love 💖
+* Thanks to the developer community!
+
+---
+
+⬆ **[Back to Top](#-mindjournal--a-mental-health-journal--mood-tracker)**
