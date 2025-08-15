@@ -3,12 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useJournal } from "../contexts/JournalContext";
-import { FiUser, FiLock, FiTrash2, FiMail, FiShield } from "react-icons/fi";
+import { FiUser, FiLock, FiTrash2, FiMail, FiShield, FiEye, FiEyeOff, FiKey, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { IoColorPaletteOutline } from "react-icons/io5";
 import { GoDatabase } from "react-icons/go";
+import PasswordStrengthIndicator from "../components/common/PasswordStrengthIndicator";
+import { validatePassword } from "../utils/passwordValidation";
 
 const Settings = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updatePassword } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { pin, setPin } = useJournal();
 
@@ -18,6 +20,20 @@ const Settings = () => {
   const [pinSuccess, setPinSuccess] = useState("");
 
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  
+  // Password change state
+  const [showPasswordSection, setShowPasswordSection] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    newPassword: "",
+    confirmPassword: ""
+  });
+  const [showPasswords, setShowPasswords] = useState({
+    new: false,
+    confirm: false
+  });
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   const handleSetPin = (e) => {
     e.preventDefault();
@@ -37,6 +53,66 @@ const Settings = () => {
     setPinSuccess("PIN has been updated successfully!");
     setNewPin("");
     setConfirmPin("");
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess("");
+    setPasswordLoading(true);
+
+    try {
+      // Validate passwords match
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        setPasswordError("New passwords do not match");
+        return;
+      }
+
+      // Validate password strength
+      const passwordValidation = validatePassword(passwordData.newPassword);
+      if (!passwordValidation.isValid) {
+        setPasswordError("Password does not meet security requirements");
+        return;
+      }
+
+      // Update password directly since user is already authenticated
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const userIndex = users.findIndex(u => u.id === user.id);
+      
+      if (userIndex === -1) {
+        setPasswordError("User not found");
+        return;
+      }
+
+      users[userIndex].password = passwordData.newPassword;
+      localStorage.setItem('users', JSON.stringify(users));
+      
+      setPasswordSuccess("Password updated successfully!");
+      setPasswordData({
+        newPassword: "",
+        confirmPassword: ""
+      });
+      
+      // Auto-collapse the section after success
+      setTimeout(() => {
+        setShowPasswordSection(false);
+        setPasswordSuccess("");
+      }, 3000);
+      
+    } catch (error) {
+      setPasswordError(error.message || "Failed to update password");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handlePasswordInputChange = (field, value) => {
+    setPasswordData(prev => ({ ...prev, [field]: value }));
+    setPasswordError("");
+  };
+
+  const togglePasswordVisibility = (field) => {
+    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
   const clearAllData = () => {
@@ -98,9 +174,7 @@ const Settings = () => {
                 aria-hidden="true"
               />
             }
-            title={
-              <h2 className="text-lg font-lora font-bold">Account Settings</h2>
-            }
+            title="Account Settings"
             className="flex items-center gap-3"
           />
 
@@ -130,10 +204,150 @@ const Settings = () => {
                 <FiLock className="mr-2" aria-hidden="true" />
                 Password
               </div>
-              <div className="font-libre-baskerville font-medium text-neutral-800 dark:text-white">
-                ••••••••
+              <div className="flex items-center justify-between">
+                <div className="font-libre-baskerville font-medium text-neutral-800 dark:text-white">
+                  ••••••••
+                </div>
+                <button
+                  onClick={() => setShowPasswordSection(!showPasswordSection)}
+                  className="flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+                >
+                  Change Password
+                  {showPasswordSection ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+                </button>
               </div>
             </div>
+
+            <AnimatePresence>
+              {showPasswordSection && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-4 px-4 py-2 border-t border-neutral-200 dark:border-neutral-700">
+                    <form onSubmit={handlePasswordChange} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                          New Password
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <FiLock className="text-neutral-500" />
+                          </div>
+                          <input
+                            type={showPasswords.new ? "text" : "password"}
+                            value={passwordData.newPassword}
+                            onChange={(e) => handlePasswordInputChange("newPassword", e.target.value)}
+                            className="input pl-10 pr-10"
+                            placeholder="Enter new password"
+                            required
+                            disabled={passwordLoading}
+                          />
+                          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <button
+                              type="button"
+                              onClick={() => togglePasswordVisibility("new")}
+                              className="text-neutral-500 focus:outline-none"
+                              aria-label={showPasswords.new ? "Hide password" : "Show password"}
+                            >
+                              {showPasswords.new ? <FiEyeOff /> : <FiEye />}
+                            </button>
+                          </div>
+                        </div>
+                        <PasswordStrengthIndicator password={passwordData.newPassword} />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                          Confirm New Password
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <FiLock className="text-neutral-500" />
+                          </div>
+                          <input
+                            type={showPasswords.confirm ? "text" : "password"}
+                            value={passwordData.confirmPassword}
+                            onChange={(e) => handlePasswordInputChange("confirmPassword", e.target.value)}
+                            className="input pl-10 pr-10"
+                            placeholder="Confirm new password"
+                            required
+                            disabled={passwordLoading}
+                          />
+                          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <button
+                              type="button"
+                              onClick={() => togglePasswordVisibility("confirm")}
+                              className="text-neutral-500 focus:outline-none"
+                              aria-label={showPasswords.confirm ? "Hide password" : "Show password"}
+                            >
+                              {showPasswords.confirm ? <FiEyeOff /> : <FiEye />}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {passwordError && (
+                        <motion.div 
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg text-sm"
+                        >
+                          {passwordError}
+                        </motion.div>
+                      )}
+
+                      {passwordSuccess && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg text-sm"
+                        >
+                          {passwordSuccess}
+                        </motion.div>
+                      )}
+
+                      <div className="flex gap-3">
+                        <motion.button
+                          type="submit"
+                          disabled={passwordLoading}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="btn btn-primary flex-1 font-libre-baskerville font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {passwordLoading ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              Updating...
+                            </div>
+                          ) : (
+                            "Update Password"
+                          )}
+                        </motion.button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowPasswordSection(false);
+                            setPasswordData({
+                              newPassword: "",
+                              confirmPassword: ""
+                            });
+                            setPasswordError("");
+                            setPasswordSuccess("");
+                          }}
+                          className="btn btn-outline font-libre-baskerville font-medium"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <button
               onClick={logout}
@@ -149,7 +363,7 @@ const Settings = () => {
         <div className="border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-5 py-4">
           <SectionHeader
             icon={<IoColorPaletteOutline />}
-            title={<h2 className="text-lg font-lora font-bold">Appearance</h2>}
+            title="Appearance"
             className="flex items-center gap-3"
           />
 
@@ -190,9 +404,7 @@ const Settings = () => {
                 aria-hidden="true"
               />
             }
-            title={
-              <h2 className="text-lg font-lora font-bold">Vault Settings</h2>
-            }
+            title="Vault Settings"
             className="flex items-center gap-3"
           />
 
@@ -248,9 +460,7 @@ const Settings = () => {
         <div className="px-5 py-4">
           <SectionHeader
             icon={<GoDatabase />}
-            title={
-              <h2 className="text-lg font-lora font-bold">Data Management</h2>
-            }
+            title="Data Management"
             className="flex items-center gap-3"
           />
 
