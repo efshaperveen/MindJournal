@@ -63,6 +63,7 @@ const Register = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Name */}
         <div>
           <label
             htmlFor="name"
@@ -81,12 +82,13 @@ const Register = () => {
               required
               value={formData.name}
               onChange={handleChange}
-              className="input pl-10 font-lora"
+              className="input pl-10 font-lora text-neutral-900 dark:text-white"
               placeholder="Your name"
             />
           </div>
         </div>
 
+        {/* Email */}
         <div>
           <label
             htmlFor="email"
@@ -105,12 +107,13 @@ const Register = () => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="input pl-10 font-lora"
+              className="input pl-10 font-lora text-neutral-900 dark:text-white"
               placeholder="your@email.com"
             />
           </div>
         </div>
 
+        {/* Password */}
         <div>
           <label
             htmlFor="password"
@@ -129,7 +132,7 @@ const Register = () => {
               required
               value={formData.password}
               onChange={handleChange}
-              className="input pl-10 pr-10"
+              className="input pl-10 pr-10 text-neutral-900 dark:text-white"
               placeholder="••••••••"
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -145,6 +148,7 @@ const Register = () => {
           </div>
         </div>
 
+        {/* Confirm Password */}
         <div>
           <label
             htmlFor="confirmPassword"
@@ -163,13 +167,15 @@ const Register = () => {
               required
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="input pl-10 pr-10"
+              className="input pl-10 pr-10 text-neutral-900 dark:text-white"
               placeholder="••••••••"
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
               <button
                 type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                onClick={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
                 className="text-neutral-500 focus:outline-none"
                 aria-label={
                   showConfirmPassword ? "Hide password" : "Show password"
@@ -181,6 +187,7 @@ const Register = () => {
           </div>
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
@@ -190,12 +197,14 @@ const Register = () => {
         </button>
       </form>
 
+      {/* Divider */}
       <div className="mt-4 text-center">
         <p className="text-[16px] font-lora font-medium text-neutral-600 dark:text-neutral-400">
           or
         </p>
       </div>
 
+      {/* Google Login */}
       <div className="mt-4 flex justify-center">
         <GoogleLogin
           onSuccess={loginWithGoogle}
@@ -205,7 +214,8 @@ const Register = () => {
         />
       </div>
 
-      <div className="mt-6 text-center text-sm font-libre-baskerville  text-neutral-600 dark:text-neutral-400">
+      {/* Link to login */}
+      <div className="mt-6 text-center text-sm font-libre-baskerville text-neutral-600 dark:text-neutral-400">
         Already have an account?{" "}
         <Link
           to="/login"
