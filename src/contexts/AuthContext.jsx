@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from "jwt-decode";
+import { validatePassword } from '../utils/passwordValidation'
 
 const AuthContext = createContext()
 
@@ -113,13 +114,128 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  // Password reset functionality - calls backend API
+  const requestPasswordReset = async (email) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Check if user exists locally first
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const userExists = users.find(u => u.email === email);
+        
+        if (!userExists) {
+          reject(new Error('No account found with this email address.'));
+          return;
+        }
+        
+        // Call backend API to send reset email
+        const response = await fetch('http://localhost:5000/api/auth/forgot-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, users }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          reject(new Error(data.error || 'Failed to send reset email'));
+          return;
+        }
+        
+        resolve({ message: data.message || 'Password reset email sent successfully!' });
+      } catch (error) {
+        console.error('Password reset error:', error);
+        reject(new Error('Failed to send password reset email. Please try again.'));
+      }
+    });
+  };
+
+  // Reset password with token - calls backend API
+  const resetPassword = async (email, token, newPassword) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Validate password strength
+        const passwordValidation = validatePassword(newPassword);
+        if (!passwordValidation.isValid) {
+          reject(new Error('Password does not meet security requirements.'));
+          return;
+        }
+
+        // Get current users data
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+        // Call backend API to reset password
+        const response = await fetch('http://localhost:5000/api/auth/reset-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, token, newPassword, users }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          reject(new Error(data.error || 'Failed to reset password'));
+          return;
+        }
+
+        // Update local storage with the hashed password from backend
+        if (data.users) {
+          localStorage.setItem('users', JSON.stringify(data.users));
+        }
+        
+        resolve({ message: data.message || 'Password reset successfully!' });
+      } catch (error) {
+        console.error('Reset password error:', error);
+        reject(new Error('Failed to reset password. Please try again.'));
+      }
+    });
+  };
+
+  // Update password (from settings)
+  const updatePassword = (currentPassword, newPassword) => {
+    return new Promise((resolve, reject) => {
+      try {
+        // Validate new password strength
+        const passwordValidation = validatePassword(newPassword);
+        if (!passwordValidation.isValid) {
+          reject(new Error('New password does not meet security requirements.'));
+          return;
+        }
+
+        // Verify current password
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const currentUser = users.find(u => u.id === user.id);
+        
+        if (!currentUser || currentUser.password !== currentPassword) {
+          reject(new Error('Current password is incorrect.'));
+          return;
+        }
+
+        // Update password
+        const userIndex = users.findIndex(u => u.id === user.id);
+        users[userIndex].password = newPassword;
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        resolve({ message: 'Password updated successfully!' });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
   const value = {
     user,
     loading,
     login,
     register,
     logout,
-    loginWithGoogle
+    loginWithGoogle,
+    requestPasswordReset,
+    resetPassword,
+    updatePassword
   }
 
   return (

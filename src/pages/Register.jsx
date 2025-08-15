@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { GoogleLogin } from "@react-oauth/google";
+import PasswordStrengthIndicator from "../components/common/PasswordStrengthIndicator";
+import { validatePassword } from "../utils/passwordValidation";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -30,8 +32,10 @@ const Register = () => {
       return setError("Passwords do not match");
     }
 
-    if (formData.password.length < 6) {
-      return setError("Password must be at least 6 characters");
+    // Validate password strength
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      return setError("Password does not meet security requirements");
     }
 
     try {
@@ -146,6 +150,9 @@ const Register = () => {
               </button>
             </div>
           </div>
+          
+          {/* Password Strength Indicator */}
+          <PasswordStrengthIndicator password={formData.password} />
         </div>
 
         {/* Confirm Password */}
