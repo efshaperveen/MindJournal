@@ -45,10 +45,11 @@ const Login = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Email */}
         <div>
           <label
             htmlFor="email"
-            className="block  text-sm font-libre-baskerville font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+            className="block text-sm font-libre-baskerville font-medium text-neutral-700 dark:text-neutral-300 mb-1"
           >
             Email
           </label>
@@ -62,12 +63,13 @@ const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="input pl-10 font-lora"
+              className="input pl-10 font-lora text-neutral-900 dark:text-white"
               placeholder="your@email.com"
             />
           </div>
         </div>
 
+        {/* Password */}
         <div>
           <label
             htmlFor="password"
@@ -85,10 +87,9 @@ const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="input pl-10"
+              className="input pl-10 text-neutral-900 dark:text-white"
               placeholder="••••••••"
             />
-
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
               <button
                 type="button"
@@ -101,6 +102,8 @@ const Login = () => {
             </div>
           </div>
         </div>
+
+        {/* Forgot Password */}
         <div className="text-right text-sm">
           <Link
             to="/forgot-password"
@@ -110,6 +113,7 @@ const Login = () => {
           </Link>
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
@@ -119,12 +123,14 @@ const Login = () => {
         </button>
       </form>
 
+      {/* Divider */}
       <div className="mt-4 text-center">
         <p className="text-[16px] font-lora font-medium text-neutral-600 dark:text-neutral-400">
           or
         </p>
       </div>
 
+      {/* Google Login */}
       <div className="mt-4 flex justify-center">
         <GoogleLogin
           onSuccess={loginWithGoogle}
@@ -134,7 +140,8 @@ const Login = () => {
         />
       </div>
 
-      <div className="mt-6 text-center text-sm font-libre-baskerville  text-neutral-600 dark:text-neutral-400">
+      {/* Register */}
+      <div className="mt-6 text-center text-sm font-libre-baskerville text-neutral-600 dark:text-neutral-400">
         Don't have an account?{" "}
         <Link
           to="/register"

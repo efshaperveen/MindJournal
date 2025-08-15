@@ -1,14 +1,12 @@
 import { useState, useMemo } from "react";
 import { useJournal } from "../contexts/JournalContext";
 import { useTheme } from "../contexts/ThemeContext";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Pie, Bar } from "react-chartjs-2";
 import {
   format,
   startOfWeek,
-  endOfWeek,
   startOfMonth,
-  endOfMonth,
   parseISO,
 } from "date-fns";
 import {
@@ -21,8 +19,9 @@ import {
   Legend,
   ArcElement,
   PointElement,
-  LineElement
+  LineElement,
 } from "chart.js";
+import { FiBarChart2, FiPieChart, FiTrendingUp, FiCalendar } from "react-icons/fi";
 
 // Register ChartJS components
 ChartJS.register(
@@ -54,13 +53,12 @@ const Stats = () => {
     } else if (timeRange === "month") {
       startDate = startOfMonth(now);
     } else {
-      return entries; // 'all' time range
+      return entries;
     }
 
     return entries.filter((entry) => parseISO(entry.createdAt) >= startDate);
   }, [entries, timeRange]);
 
-  // Mood distribution
   const moodData = useMemo(() => {
     if (filteredEntries.length === 0) return null;
 
@@ -79,11 +77,11 @@ const Stats = () => {
     });
 
     const backgroundColor = [
-      "rgba(34, 197, 94, 0.8)", // green for great
-      "rgba(59, 130, 246, 0.8)", // blue for good
-      "rgba(234, 179, 8, 0.8)", // yellow for okay
-      "rgba(249, 115, 22, 0.8)", // orange for bad
-      "rgba(239, 68, 68, 0.8)", // red for awful
+      "rgba(34, 197, 94, 0.8)",
+      "rgba(59, 130, 246, 0.8)",
+      "rgba(234, 179, 8, 0.8)",
+      "rgba(249, 115, 22, 0.8)",
+      "rgba(239, 68, 68, 0.8)",
     ];
 
     const borderColor = [
@@ -107,325 +105,234 @@ const Stats = () => {
           ],
           backgroundColor,
           borderColor,
-          borderWidth: 1,
+          borderWidth: 2,
         },
       ],
     };
   }, [filteredEntries]);
 
-  // Activity distribution
-  const activityData = useMemo(() => {
+  const weeklyData = useMemo(() => {
     if (filteredEntries.length === 0) return null;
 
-    // Count activity occurrences
-    const activityCounts = {};
+    const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const dayCounts = [0, 0, 0, 0, 0, 0, 0];
 
     filteredEntries.forEach((entry) => {
-      if (entry.activities && entry.activities.length) {
-        entry.activities.forEach((activity) => {
-          if (!activityCounts[activity]) {
-            activityCounts[activity] = 0;
-          }
-          activityCounts[activity]++;
-        });
-      }
+      const day = parseISO(entry.createdAt).getDay();
+      dayCounts[day]++;
     });
 
-    // Sort activities by frequency and take top 10
-    const sortedActivities = Object.entries(activityCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10);
-
-    const labels = sortedActivities.map(([activity]) => activity);
-    const data = sortedActivities.map(([, count]) => count);
-
     return {
-      labels,
+      labels: weekDays,
       datasets: [
         {
-          label: "Activity Frequency",
-          data,
-          backgroundColor: "rgba(139, 92, 246, 0.7)",
-          borderColor: "rgba(109, 40, 217, 1)",
-          borderWidth: 1,
-          borderRadius: 4,
+          label: "Entries",
+          data: dayCounts,
+          backgroundColor: "rgba(14, 165, 233, 0.8)",
+          borderColor: "rgba(14, 165, 233, 1)",
+          borderWidth: 2,
+          borderRadius: 8,
+          borderSkipped: false,
         },
       ],
     };
   }, [filteredEntries]);
 
- const pieOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "right",
-      labels: {
-        color: theme === "dark" ? "#e5e5e5" : "#262626",
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          color: theme === "dark" ? "#e5e5e5" : "#404040",
+          padding: 20,
+          usePointStyle: true,
+        },
+      },
+      datalabels: {
+        color: theme === "dark" ? "#ffffff" : "#000000",
         font: {
-          size: 14,
-          family: "Lora",
+          weight: "bold",
+        },
+        formatter: (value) => {
+          return value > 0 ? value : "";
         },
       },
     },
-    datalabels: {
-      color: theme === "dark" ? "#e5e5e5" : "#262626",
-      font: { family: "Lora", weight: "bold" },
-      formatter: (value, ctx) => {
-        const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-        return total ? `${((value / total) * 100).toFixed(1)}%` : '';
-      },
-    },
-    title: {
-      display: true,
-      text: "Mood Distribution",
-      color: theme === "dark" ? "#e5e5e5" : "#262626",
-      font: {
-        family: "Libre Baskerville",
-        size: 18,
-        weight: "bold",
-      },
-    },
-    tooltip: {
-      bodyFont: {
-        family: "Lora",
-        size: 13,
-      },
-      titleFont: {
-        family: "Lora",
-        size: 13,
-        weight: "bold",
-      },
-    },
-  },
-  animation: {
-    duration: 600,
-    easing: "easeOutQuart",
-  },
-};
+  };
 
-const barOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  indexAxis: "y",
-  plugins: {
-    legend: {
-      display: false,
-    },
-    title: {
-      display: true,
-      text: "Top Activities",
-      color: theme === "dark" ? "#e5e5e5" : "#262626",
-      font: {
-        family: "Libre Baskerville",
-        size: 18,
-        weight: "bold",
-      },
-    },
-    tooltip: {
-      bodyFont: {
-        family: "Lora",
-        size: 13,
-      },
-      titleFont: {
-        family: "Lora",
-        size: 13,
-        weight: "bold",
-      },
-    },
-    datalabels: {
-      anchor: 'end',
-      align: 'end',
-      color: theme === "dark" ? "#e5e5e5" : "#262626",
-      font: {
-        family: "Lora",
-        weight: "bold",
-      },
-      formatter: (value) => value,
-    },
-  },
-  scales: {
-    y: {
-      ticks: {
-        color: theme === "dark" ? "#a3a3a3" : "#525252",
-        font: {
-          family: "Lora",
-          size: 14,
+  const barOptions = {
+    ...chartOptions,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: theme === "dark" ? "#e5e5e5" : "#404040",
+        },
+        grid: {
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.1)"
+              : "rgba(0, 0, 0, 0.1)",
         },
       },
-      grid: {
-        display: false,
-      },
-    },
-    x: {
-      beginAtZero: true,
-      ticks: {
-        color: theme === "dark" ? "#a3a3a3" : "#525252",
-        precision: 0,
-        font: {
-          family: "Lora",
-          size: 14,
+      x: {
+        ticks: {
+          color: theme === "dark" ? "#e5e5e5" : "#404040",
+        },
+        grid: {
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.1)"
+              : "rgba(0, 0, 0, 0.1)",
         },
       },
-      grid: {
-        color:
-          theme === "dark"
-            ? "rgba(64, 64, 64, 0.5)"
-            : "rgba(229, 229, 229, 0.5)",
-      },
     },
-  },
-  animation: {
-    duration: 600,
-    easing: "easeOutQuart",
-  },
-};
+  };
 
+  const getTimeRangeLabel = () => {
+    switch (timeRange) {
+      case "week":
+        return "This Week";
+      case "month":
+        return "This Month";
+      case "all":
+        return "All Time";
+      default:
+        return "This Month";
+    }
+  };
 
- return (
-  <div className="space-y-6 animate-fadeIn">
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-neutral-900/60 backdrop-blur-md px-4 py-4 rounded-xl shadow-inner">
-      <div className="relative">
-        <h1 className="text-2xl md:text-3xl font-libre-baskerville font-bold text-neutral-900 dark:text-white">
-          <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-            Insights
-          </span>
-        </h1>
-        <span className="absolute left-0 bottom-0 w-full h-1 bg-gradient-to-r from-teal-400 to-cyan-400 opacity-20 rounded-full animate-pulse"></span>
-      </div>
-
-      <div className="inline-flex rounded-md shadow-inner border border-neutral-300 dark:border-neutral-700 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md overflow-hidden" role="group">
-        {["week", "month", "all"].map((range) => (
-          <button
-            key={range}
-            onClick={() => setTimeRange(range)}
-            className={`px-4 py-2 text-sm font-lora font-medium transition-all duration-200 ${
-              timeRange === range
-                ? "bg-primary-600 text-white shadow-md hover:shadow-lg ring-2 ring-cyan-400/40"
-                : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:ring-1 hover:ring-cyan-300/40"
-            }`}
-          >
-            {range === "week" ? "This Week" : range === "month" ? "This Month" : "All Time"}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    {filteredEntries.length === 0 ? (
-      <div className="card p-8 text-center bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md rounded-xl shadow-inner animate-fadeIn">
-        <h2 className="text-lg font-libre-baskerville font-semibold text-neutral-900 dark:text-white mb-2">
-          No data available!
-        </h2>
-        <p className="font-lora text-neutral-600 dark:text-neutral-400">
-          There are no journal entries for the selected time period.
+  return (
+    <div className="min-h-screen space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="glass-card p-6 rounded-2xl border-gradient">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
+            <FiBarChart2 className="w-5 h-5 text-white" />
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold gradient-text">
+            Insights & Analytics
+          </h1>
+        </div>
+        <p className="text-neutral-600 dark:text-neutral-300">
+          Discover patterns and trends in your journaling journey
         </p>
       </div>
-    ) : (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn">
-        <div className="card p-4 h-[300px] bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md rounded-xl shadow-md hover:shadow-cyan-400/20 transition-shadow duration-300 delay-100">
-          {moodData && <Pie data={moodData} options={pieOptions} />}
+
+      {/* Time Range Selector */}
+      <div className="glass-card p-4 rounded-xl border-gradient">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-8 h-8 bg-gradient-secondary rounded-lg flex items-center justify-center">
+            <FiCalendar className="w-4 h-4 text-white" />
+          </div>
+          <h2 className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">
+            Time Range
+          </h2>
+        </div>
+        <div className="flex space-x-2">
+          {["week", "month", "all"].map((range) => (
+            <button
+              key={range}
+              onClick={() => setTimeRange(range)}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                timeRange === range
+                  ? "bg-gradient-primary text-white shadow-glow"
+                  : "bg-white/50 dark:bg-neutral-800/50 text-neutral-700 dark:text-neutral-200 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+              }`}
+            >
+              {range.charAt(0).toUpperCase() + range.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="glass-card p-4 rounded-xl border-gradient text-center">
+          <div className="w-12 h-12 bg-gradient-success rounded-xl flex items-center justify-center mx-auto mb-3">
+            <FiTrendingUp className="w-6 h-6 text-white" />
+          </div>
+          <div className="text-2xl font-bold text-neutral-700 dark:text-neutral-200">
+            {filteredEntries.length}
+          </div>
+          <div className="text-sm text-neutral-500 dark:text-neutral-400">
+            Total Entries
+          </div>
         </div>
 
-        <div className="card p-4 h-[300px] bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md rounded-xl shadow-md hover:shadow-cyan-400/20 transition-shadow duration-300 delay-200">
-          {activityData ? (
-            <Bar data={activityData} options={barOptions} />
+        <div className="glass-card p-4 rounded-xl border-gradient text-center">
+          <div className="w-12 h-12 bg-gradient-secondary rounded-xl flex items-center justify-center mx-auto mb-3">
+            <FiPieChart className="w-6 h-6 text-white" />
+          </div>
+          <div className="text-2xl font-bold text-neutral-700 dark:text-neutral-200">
+            {filteredEntries.filter((entry) => entry.mood).length}
+          </div>
+          <div className="text-sm text-neutral-500 dark:text-neutral-400">
+            Mood Entries
+          </div>
+        </div>
+
+        <div className="glass-card p-4 rounded-xl border-gradient text-center">
+          <div className="w-12 h-12 bg-gradient-accent rounded-xl flex items-center justify-center mx-auto mb-3">
+            <FiBarChart2 className="w-6 h-6 text-white" />
+          </div>
+          <div className="text-2xl font-bold text-neutral-700 dark:text-neutral-200">
+            {getTimeRangeLabel()}
+          </div>
+          <div className="text-sm text-neutral-500 dark:text-neutral-400">
+            Time Period
+          </div>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Mood Distribution */}
+        <div className="glass-card p-6 rounded-2xl border-gradient">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-8 h-8 bg-gradient-success rounded-lg flex items-center justify-center">
+              <FiPieChart className="w-4 h-4 text-white" />
+            </div>
+            <h2 className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">
+              Mood Distribution
+            </h2>
+          </div>
+          {moodData ? (
+            <div className="h-64">
+              <Pie data={moodData} options={chartOptions} />
+            </div>
           ) : (
-            <div className="h-full flex items-center justify-center">
-              <p className="text-neutral-500 dark:text-neutral-400 font-lora">
-                No activity data available
-              </p>
+            <div className="h-64 flex items-center justify-center text-neutral-500 dark:text-neutral-400">
+              No mood data available
             </div>
           )}
         </div>
 
-        <div className="card p-6 lg:col-span-2 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md rounded-xl shadow-md hover:shadow-cyan-400/20 transition-shadow duration-300 delay-300">
-          <h2 className="text-[18px] font-libre-baskerville font-bold text-neutral-900 dark:text-white mb-4">
-            Journal Stats
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 bg-primary-100/50 dark:bg-primary-900/30 rounded-lg shadow-sm hover:shadow-primary-400/30 transition-shadow duration-300">
-              <div className="text-[16px] font-lora font-medium text-neutral-600 dark:text-neutral-400">
-                Total Entries
-              </div>
-              <div className="text-3xl font-lora font-semibold text-primary-700 dark:text-primary-400">
-                {filteredEntries.length}
-              </div>
+        {/* Weekly Activity */}
+        <div className="glass-card p-6 rounded-2xl border-gradient">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+              <FiBarChart2 className="w-4 h-4 text-white" />
             </div>
-
-            <div className="p-4 bg-secondary-100/50 dark:bg-secondary-900/30 rounded-lg shadow-sm hover:shadow-secondary-400/30 transition-shadow duration-300">
-              <div className="text-[16px] font-lora font-medium text-neutral-600 dark:text-neutral-400">
-                Average Mood
-              </div>
-              <div className="text-3xl font-lora font-semibold text-secondary-700 dark:text-secondary-400">
-                {filteredEntries.some((e) => e.mood)
-                  ? (() => {
-                      const moodScore = {
-                        great: 5,
-                        good: 4,
-                        okay: 3,
-                        bad: 2,
-                        awful: 1,
-                      };
-                      const entriesWithMood = filteredEntries.filter((e) => e.mood);
-                      const average =
-                        entriesWithMood.reduce((sum, entry) => sum + moodScore[entry.mood], 0) /
-                        entriesWithMood.length;
-
-                      if (average >= 4.5) return "Great";
-                      if (average >= 3.5) return "Good";
-                      if (average >= 2.5) return "Okay";
-                      if (average >= 1.5) return "Bad";
-                      return "Awful";
-                    })()
-                  : "N/A"}
-              </div>
-            </div>
-
-            <div className="p-4 bg-green-100/50 dark:bg-green-900/30 rounded-lg shadow-sm hover:shadow-green-400/30 transition-shadow duration-300">
-              <div className="text-[16px] font-lora font-medium text-neutral-600 dark:text-neutral-400">
-                Most Common Mood
-              </div>
-              <div className="text-3xl font-lora font-semibold text-green-700 dark:text-green-400">
-                {filteredEntries.some((e) => e.mood)
-                  ? (() => {
-                      const moodCounts = filteredEntries.reduce((acc, entry) => {
-                        if (entry.mood) {
-                          acc[entry.mood] = (acc[entry.mood] || 0) + 1;
-                        }
-                        return acc;
-                      }, {});
-
-                      const mostCommonMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0][0];
-                      return mostCommonMood.charAt(0).toUpperCase() + mostCommonMood.slice(1);
-                    })()
-                  : "N/A"}
-              </div>
-            </div>
-
-            <div className="p-4 bg-yellow-100/50 dark:bg-yellow-900/30 rounded-lg shadow-sm hover:shadow-yellow-400/30 transition-shadow duration-300">
-              <div className="text-[16px] font-lora font-medium text-neutral-600 dark:text-neutral-400">
-                Most Active Day
-              </div>
-              <div className="text-3xl font-lora font-semibold text-yellow-700 dark:text-yellow-400">
-                {filteredEntries.length > 0
-                  ? (() => {
-                      const dayCounts = filteredEntries.reduce((acc, entry) => {
-                        const day = format(parseISO(entry.createdAt), "EEEE");
-                        acc[day] = (acc[day] || 0) + 1;
-                        return acc;
-                      }, {});
-                      return Object.entries(dayCounts).sort((a, b) => b[1] - a[1])[0][0];
-                    })()
-                  : "N/A"}
-              </div>
-            </div>
+            <h2 className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">
+              Weekly Activity
+            </h2>
           </div>
+          {weeklyData ? (
+            <div className="h-64">
+              <Bar data={weeklyData} options={barOptions} />
+            </div>
+          ) : (
+            <div className="h-64 flex items-center justify-center text-neutral-500 dark:text-neutral-400">
+              No activity data available
+            </div>
+          )}
         </div>
       </div>
-    )}
-  </div>
-);
+    </div>
+  );
 };
 
 export default Stats;

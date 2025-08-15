@@ -15,7 +15,7 @@ import {
   addMonths,
   subMonths,
 } from "date-fns";
-import { FiChevronLeft, FiChevronRight, FiPlus } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiPlus, FiCalendar } from "react-icons/fi";
 import SidePanel from "../components/calendar/SidePanel";
 
 const Calendar = () => {
@@ -82,133 +82,131 @@ const Calendar = () => {
 
   if (isLoading) {
     return (
-      <div className="p-6 animate-fadeIn">
-        {/* Skeleton UI as before */}
-        <p className="text-center text-neutral-600 dark:text-neutral-300">
-          Loading...
-        </p>
+      <div className="p-6 animate-fade-in">
+        <div className="glass-card p-8 rounded-2xl border-gradient text-center">
+          <div className="loading-spinner mx-auto mb-4"></div>
+          <p className="text-neutral-600 dark:text-neutral-300">
+            Loading calendar...
+          </p>
+        </div>
       </div>
-
     );
   }
 
   return (
-    <div className="relative flex flex-col lg:flex-row gap-6 px-4 py-6 bg-neutral-900/60 backdrop-blur-xl rounded-2xl shadow-inner border border-neutral-700 animate-fadeIn">
-      <div
-        className={`flex-1 transition-all duration-300 ease-in-out ${
-          selectedDay ? "opacity-40 blur-sm scale-[0.98] pointer-events-none" : "opacity-100 blur-0 scale-100"
-        }`}
-      >
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl md:text-3xl font-libre-baskerville font-bold  text-neutral-900 dark:text-white relative">
-           <motion.span
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 300 }}
-          className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent"
-        >
-          Calendar
-        </motion.span>
-        <motion.span
-          initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 0.2, width: "100%" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="absolute left-0 bottom-0 h-1 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full animate-pulse"
-        />
-      </h1>
-
-          <div className="flex space-x-2  items-center">
-           <motion.button
-          whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.1, backgroundColor: "rgba(20,184,166,0.3)" }}
-          transition={{ duration: 0.2 }}
-          onClick={prevMonth}
-          className="p-2 rounded-full bg-neutral-800 hover:text-white transition-all duration-200 shadow-sm hover:shadow-md"
-        >
-          <FiChevronLeft size={20} />
-        </motion.button>
-              <motion.button
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 300 }}
-          className="px-4 py-2 text-neutral-300 hover:text-teal-400 transition-colors duration-200 relative"
-          onClick={() => setCurrentMonth(new Date())}
-        >
-          {format(currentMonth, "MMMM yyyy")}
-        </motion.button>
-
-             <motion.button
-          whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.1, backgroundColor: "rgba(20,184,166,0.3), boxShadow: 0 0 10px rgba(20,184,166,0.6)"}}
-          transition={{ duration: 0.2 }}
-          onClick={nextMonth}
-          className="p-2 rounded-full bg-neutral-800 hover:text-white transition-all duration-200 shadow-sm hover:shadow-md"
-        >
-          <FiChevronRight size={20} />
-        </motion.button>
+    <div className="min-h-screen space-y-6 animate-fade-in">
+      {/* Header Section */}
+      <div className="glass-card p-6 rounded-2xl border-gradient">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
+            <FiCalendar className="w-5 h-5 text-white" />
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold gradient-text">
+            Calendar View
+          </h1>
+        </div>
+        
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+          <p className="text-neutral-600 dark:text-neutral-300">
+            Track your journaling journey and view your entries by date
+          </p>
+          
+          <div className="flex items-center space-x-2">
             <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.05, backgroundColor: "rgba(20,184,166,0.2)" }}
-          transition={{ duration: 0.2 }}
-          onClick={() => setCurrentMonth(new Date())}
-          className="px-3 py-1 ml-2 rounded-lg bg-neutral-700 text-neutral-300 hover:text-white hover:shadow-md transition-all"
-        >
-          Today
-        </motion.button>
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+              onClick={prevMonth}
+              className="btn btn-outline p-2 rounded-xl hover:shadow-glow"
+            >
+              <FiChevronLeft size={20} />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="px-6 py-2 text-lg font-semibold gradient-text hover:shadow-glow transition-all duration-300"
+              onClick={() => setCurrentMonth(new Date())}
+            >
+              {format(currentMonth, "MMMM yyyy")}
+            </motion.button>
+            
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+              onClick={nextMonth}
+              className="btn btn-outline p-2 rounded-xl hover:shadow-glow"
+            >
+              <FiChevronRight size={20} />
+            </motion.button>
+            
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setCurrentMonth(new Date())}
+              className="btn btn-primary px-4 py-2 rounded-xl"
+            >
+              Today
+            </motion.button>
+          </div>
+        </div>
       </div>
-    </div>
 
-        {/* Grid */}
-        <div className="overflow-hidden rounded-2xl bg-neutral-800/50 backdrop-blur-md shadow-inner border border-neutral-700">
-         <div className="grid grid-cols-1 md:grid-cols-7 border-b border-neutral-700 transition-all duration-300">
-
+      {/* Calendar Grid */}
+      <div className="glass-card p-6 rounded-2xl border-gradient">
+        <div className="overflow-hidden rounded-xl bg-white/50 dark:bg-neutral-800/50 backdrop-blur-md shadow-soft">
+          {/* Day Headers */}
+          <div className="grid grid-cols-7 border-b border-neutral-200/50 dark:border-neutral-700/50">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
               <div
                 key={day}
-                className="py-3 font-libre-baskerville font-semibold text-neutral-300 uppercase text-[13px] tracking-wide"
+                className="py-4 font-semibold text-neutral-600 dark:text-neutral-300 uppercase text-sm tracking-wide text-center"
               >
                 {day}
               </div>
             ))}
           </div>
 
-         <div className="grid grid-cols-7 md:grid-cols-7 grid-cols-1 border-b border-neutral-700 transition-all duration-300">
-    {calendarDays.map((week, weekIndex) => (
-      <Fragment key={weekIndex}>
-        {week.map((day, dayIndex) => {
-          const isPastOrToday = day.date <= new Date();
-          const isClickable = (day.entries.length > 0 || day.isToday) && isPastOrToday;
+          {/* Calendar Days */}
+          <div className="grid grid-cols-7">
+            {calendarDays.map((week, weekIndex) => (
+              <Fragment key={weekIndex}>
+                {week.map((day, dayIndex) => {
+                  const isPastOrToday = day.date <= new Date();
+                  const isClickable = (day.entries.length > 0 || day.isToday) && isPastOrToday;
 
-          return (
+                  return (
                     <div
                       key={dayIndex}
                       onClick={
                         isClickable ? () => handleDayClick(day) : undefined
                       }
-                      className={`group relative min-h-[100px] p-2 border-r border-neutral-200 dark:border-neutral-700 last:border-r-0
+                      className={`group relative min-h-[120px] p-3 border-r border-b border-neutral-200/50 dark:border-neutral-700/50 last:border-r-0
                         ${
                           !day.isCurrentMonth
-                            ? "bg-neutral-900/60 text-neutral-500"
-                            : ""
+                            ? "bg-neutral-100/50 dark:bg-neutral-900/50 text-neutral-400"
+                            : "bg-white/30 dark:bg-neutral-800/30"
                         }
                         ${
                           day.isToday
-                            ? "ring-2 ring-teal-400/50 bg-teal-500/10 animate-pulse"
+                            ? "ring-2 ring-primary-400/50 bg-primary-500/10 animate-pulse-glow"
                             : ""
                         }
-                        ${isClickable ? "cursor-pointer hover:ring-2 hover:ring-teal-400/50 hover:shadow-lg hover:shadow-teal-300/20" : "cursor-default"}
+                        ${isClickable ? "cursor-pointer hover:ring-2 hover:ring-primary-400/50 hover:shadow-glow hover:bg-white/50 dark:hover:bg-neutral-700/50" : "cursor-default"}
 
-                        transition-all duration-300 rounded-xl  active:scale-95 hover:scale-[1.02]`}
+                        transition-all duration-300 hover:scale-[1.02]`}
                     >
                       <div className="flex justify-between items-start">
                         <div
-                          className={`flex items-center justify-center w-9 h-9 rounded-full text-sm font-libre-baskerville font-semibold transition-all duration-200
-
+                          className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold transition-all duration-200
                              ${
                             day.isToday
-                              ? "bg-teal-500 text-white shadow-md ring-2 ring-teal-300/40 animate-glow"
+                              ? "bg-gradient-primary text-white shadow-glow"
                               : isClickable
-                              ? "text-neutral-200 group-hover:bg-teal-500/20"
-                              : "text-neutral-500"
+                              ? "text-neutral-700 dark:text-neutral-200 group-hover:bg-primary-500/20 group-hover:text-primary-700 dark:group-hover:text-primary-200"
+                              : "text-neutral-500 dark:text-neutral-400"
                           }`}
                         >
                           {format(day.date, "d")}
@@ -220,17 +218,16 @@ const Calendar = () => {
                               e.stopPropagation();
                               navigate("/journal/new");
                             }}
-                            className="p-1 rounded-full bg-neutral-700 text-neutral-400 hover:bg-neutral-600 transition-colors"
+                            className="p-1.5 rounded-full bg-gradient-secondary text-white hover:shadow-glow-purple transition-all duration-300 hover:scale-110"
                           >
-                            <FiPlus size={14} />
+                            <FiPlus size={12} />
                           </button>
                         )}
                       </div>
 
                       {day.entries.length > 0 && (
                         <div className="mt-2 flex justify-center">
-                         <div className="text-xs px-2 py-1 rounded-full bg-teal-500 text-white font-libre-baskerville font-light shadow-md group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-teal-400/40 transition-all">
-
+                          <div className="text-xs px-2 py-1 rounded-full bg-gradient-secondary text-white font-medium shadow-soft group-hover:scale-105 group-hover:shadow-glow-purple transition-all duration-300">
                             {day.entries.length}{" "}
                             {day.entries.length === 1 ? "Entry" : "Entries"}
                           </div>
