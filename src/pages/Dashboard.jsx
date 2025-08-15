@@ -34,44 +34,22 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="calming-bg min-h-screen space-y-6 animate-fadeIn">
-      <style>{`
-        @keyframes wave {
-          0%, 100% { transform: rotate(0deg); }
-          10%, 30%, 50%, 70% { transform: rotate(14deg); }
-          20%, 40%, 60%, 80% { transform: rotate(-8deg); }
-        }
-        .wave-animation {
-          animation: wave 2.5s ease-in-out infinite;
-          transform-origin: 70% 70%;
-          display: inline-block;
-        }
-      `}</style>
-      
-      <div>
-        <h1 className="text-2xl md:text-3xl font-libre-baskerville font-bold text-neutral-900 dark:text-white">
-          Welcome, {user.name}
-          <span className="ml-2 wave-animation">👋</span>
-        </h1>
-        <p className="font-lora text-[18px] text-neutral-600 dark:text-neutral-400 mt-1">
-          {currentDate}
-        </p>
-      </div>
-
-      <AffirmationBanner />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="card p-6 bg-gradient-to-br from-primary-500 to-primary-600 text-white">
-          <h2 className="font-lora text-xl font-semibold mb-2">
-            Your Journal Status
-          </h2>
-          <div className="flex flex-col space-y-1">
-            <div className="flex justify-between">
-              <span className="font-lora font-light text-[18px]">
-                Total entries:
-              </span>
-              <span className="font-lora font-semibold text-xl">
-                {entries.length}
+      <div className="min-h-screen space-y-8 animate-fade-in">
+      {/* Hero Section with Enhanced Welcome */}
+      <div className="glass-card p-8 rounded-2xl border-gradient">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div className="slide-in-left">
+            <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
+              Welcome back, {user.name}
+              <span className="ml-3 inline-block animate-bounce">👋</span>
+            </h1>
+            <p className="text-lg text-neutral-600 dark:text-neutral-300 font-medium">
+              {currentDate}
+            </p>
+            <div className="mt-4 flex items-center space-x-2">
+              <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-success-600 dark:text-success-400 font-medium">
+                Ready to reflect on your day
               </span>
             </div>
           </div>
