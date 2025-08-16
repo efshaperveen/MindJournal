@@ -94,7 +94,7 @@ const Calendar = () => {
   }
 
   return (
-    <div className="min-h-screen space-y-6 animate-fade-in">
+    <div className="max-h-screen space-y-6 animate-fade-in">
       {/* Header Section */}
       <div className="glass-card p-6 rounded-2xl border-gradient">
         <div className="flex items-center space-x-3 mb-4">
@@ -155,7 +155,7 @@ const Calendar = () => {
       </div>
 
       {/* Calendar Grid */}
-      <div className="glass-card p-6 rounded-2xl border-gradient">
+      <div className="glass-card p-6 rounded-2xl border-gradient ">
         <div className="overflow-hidden rounded-xl bg-white/50 dark:bg-neutral-800/50 backdrop-blur-md shadow-soft">
           {/* Day Headers */}
           <div className="grid grid-cols-7 border-b border-neutral-200/50 dark:border-neutral-700/50">
@@ -170,7 +170,7 @@ const Calendar = () => {
           </div>
 
           {/* Calendar Days */}
-          <div className="grid grid-cols-7">
+          <div className="grid grid-cols-7 h-fit">
             {calendarDays.map((week, weekIndex) => (
               <Fragment key={weekIndex}>
                 {week.map((day, dayIndex) => {
@@ -183,7 +183,7 @@ const Calendar = () => {
                       onClick={
                         isClickable ? () => handleDayClick(day) : undefined
                       }
-                      className={`group relative min-h-[120px] p-3 border-r border-b border-neutral-200/50 dark:border-neutral-700/50 last:border-r-0
+                      className={`group relative h-[50px] p-3 border-r border-b border-neutral-200/50 dark:border-neutral-700/50 last:border-r-0
                         ${
                           !day.isCurrentMonth
                             ? "bg-neutral-100/50 dark:bg-neutral-900/50 text-neutral-400"
