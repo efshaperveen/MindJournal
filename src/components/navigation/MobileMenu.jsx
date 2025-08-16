@@ -8,6 +8,7 @@ import {
   FiSettings,
   FiLogOut,
   FiCheckCircle,
+  FiMail,
 } from "react-icons/fi";
 
 const MobileMenu = ({ onClose }) => {
@@ -18,8 +19,10 @@ const MobileMenu = ({ onClose }) => {
     { name: "Journal", path: "/journal", icon: <FiBook size={20} /> },
     { name: "Calendar", path: "/calendar", icon: <FiCalendar size={20} /> },
     { name: "Insights", path: "/stats", icon: <FiPieChart size={20} /> },
-    { name: "Gratitude", path: "/gratitude", icon: <FiCheckCircle size={20} /> }, 
+    { name: "Gratitude", path: "/gratitude", icon: <FiCheckCircle size={20} /> },
     { name: "Settings", path: "/settings", icon: <FiSettings size={20} /> },
+    { name: "Contact Us", path: "/contact", icon: <FiMail size={20} /> }
+    
   ];
 
   const handleLogout = () => {

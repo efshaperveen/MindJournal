@@ -1,45 +1,46 @@
 import { useEffect } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import { useTheme } from './contexts/ThemeContext'
-import { Toaster } from 'react-hot-toast'
 
 
 // Layouts
-import MainLayout from './layouts/MainLayout'
 import AuthLayout from './layouts/AuthLayout'
+import MainLayout from './layouts/MainLayout'
 
 // Pages
-import Dashboard from './pages/Dashboard'
-import Journal from './pages/Journal'
-import EntryDetail from './pages/EntryDetail'
-import CreateEntry from './pages/CreateEntry'
-import EditEntry from './pages/EditEntry'
 import Calendar from './pages/Calendar'
-import Stats from './pages/Stats'
-import Settings from './pages/Settings'
-import PrivateVault from './pages/PrivateVault'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import NotFound from './pages/NotFound'
-import MindChat from './pages/MindChat'
+import Contact from './pages/Contact'
+import CreateEntry from './pages/CreateEntry'
+import Dashboard from './pages/Dashboard'
+import EditEntry from './pages/EditEntry'
+import EntryDetail from './pages/EntryDetail'
 import ForgotPassword from './pages/ForgotPassword'
+import GratitudePage from './pages/GratitudePage'
+import Journal from './pages/Journal'
+import Login from './pages/Login'
+import MindChat from './pages/MindChat'
+import NotFound from './pages/NotFound'
+import PrivateVault from './pages/PrivateVault'
+import Register from './pages/Register'
 import ResetPassword from './pages/ResetPassword'
-import GratitudePage from './pages/GratitudePage';
+import Settings from './pages/Settings'
+import Stats from './pages/Stats'
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth()
-  
+
   if (!user) {
     return <Navigate to="/login" replace />
   }
-  
+
   return children
 }
 
 function App() {
   const { theme } = useTheme()
-  
+
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark')
@@ -54,34 +55,35 @@ function App() {
       <Routes>
         {/* Auth routes */}
         <Route path="/" element={<AuthLayout />}>
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgot-password" element={<ForgotPassword/>}/>
-        <Route path="reset-password" element={<ResetPassword/>}/>
-      </Route>
-      
-      {/* Protected routes */}
-      <Route path="/" element={
-        <ProtectedRoute>
-          <MainLayout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<Dashboard />} />
-        <Route path="journal" element={<Journal />} />
-        <Route path="journal/new" element={<CreateEntry />} />
-        <Route path="journal/:id" element={<EntryDetail />} />
-        <Route path="journal/:id/edit" element={<EditEntry />} />
-        <Route path="calendar" element={<Calendar />} />
-        <Route path="stats" element={<Stats />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="private-vault" element={<PrivateVault />} />
-        <Route path='mindchat' element={<MindChat/>}/>
-        <Route path="/gratitude" element={<GratitudePage />} />
-      </Route>
-      
-      {/* 404 route */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+        </Route>
+
+        {/* Protected routes */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Dashboard />} />
+          <Route path="journal" element={<Journal />} />
+          <Route path="journal/new" element={<CreateEntry />} />
+          <Route path="journal/:id" element={<EntryDetail />} />
+          <Route path="journal/:id/edit" element={<EditEntry />} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="stats" element={<Stats />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="private-vault" element={<PrivateVault />} />
+          <Route path='mindchat' element={<MindChat />} />
+          <Route path="/gratitude" element={<GratitudePage />} />
+          <Route path="/contact" element={<Contact />} />
+        </Route>
+
+        {/* 404 route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </>
   )
 }

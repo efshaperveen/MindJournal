@@ -1,17 +1,19 @@
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useTheme } from "../../contexts/ThemeContext";
 import {
-  FiHome,
   FiBook,
   FiCalendar,
+  FiCheckCircle,
+  FiHome,
+  FiLogOut,
+  FiMail,
+  FiMessageCircle,
+  FiPhone,
   FiPieChart,
   FiSettings,
-  FiLogOut,
-  FiMessageCircle,
-  FiCheckCircle,
   FiShield,
+  FiUser,
 } from "react-icons/fi";
+import { NavLink } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import ThemeToggle from "../common/ThemeToggle";
 
 const Sidebar = () => {
@@ -23,13 +25,15 @@ const Sidebar = () => {
     { name: "Private Vault", path: "/private-vault", icon: <FiShield size={20} /> },
     { name: "Calendar", path: "/calendar", icon: <FiCalendar size={20} /> },
     { name: "Insights", path: "/stats", icon: <FiPieChart size={20} /> },
-    { name: "Gratitude", path: "/gratitude", icon: <FiCheckCircle size={20} /> }, 
+    { name: "Gratitude", path: "/gratitude", icon: <FiCheckCircle size={20} /> },
     { name: "Settings", path: "/settings", icon: <FiSettings size={20} /> },
     {
       name: "MindBot-AI",
       path: "/mindchat",
       icon: <FiMessageCircle size={20} />,
     },
+    { name: "Contact Us", path: "/contact", icon: <FiMail size={20} /> },
+
   ];
 
   const activeClass =
@@ -81,8 +85,7 @@ const Sidebar = () => {
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 transform hover:translate-x-1 ${
-                isActive ? activeClass : inactiveClass
+              `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 transform hover:translate-x-1 ${isActive ? activeClass : inactiveClass
               }`
             }
             style={{ animationDelay: `${index * 0.1}s` }}
