@@ -8,8 +8,6 @@ const PrivateVault = () => {
     entries,
     privateEntryIds,
     isVaultUnlocked,
-    hasVaultPin,
-    setVaultPin,
     verifyPin,
     logoutVault,
     deleteEntry,
@@ -22,11 +20,7 @@ const PrivateVault = () => {
   };
 
   if (!isVaultUnlocked) {
-    return hasVaultPin ? (
-      <PinEntry onPinVerified={verifyPin} />
-    ) : (
-      <PinEntry onPinSet={setVaultPin} mode="set" />
-    );
+    return <PinEntry onPinVerified={verifyPin} />;
   }
 
   const privateEntries = entries.filter(entry => privateEntryIds.includes(entry.id));
