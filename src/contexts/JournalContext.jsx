@@ -11,7 +11,6 @@ export const JournalProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [activeEntry, setActiveEntry] = useState(null);
   const [pin, setPin] = useState(null);
-  const [hasVaultPin, setHasVaultPin] = useState(false);
   const [privateEntryIds, setPrivateEntryIds] = useState([]);
   const [isVaultUnlocked, setIsVaultUnlocked] = useState(false);
   const [entryToMakePrivate, setEntryToMakePrivate] = useState(null);
@@ -31,14 +30,8 @@ export const JournalProvider = ({ children }) => {
         console.error("Failed to parse journal entries from localStorage", error);
         setEntries([]); // Reset to empty array on error
       }
-     const storedPin = localStorage.getItem(`journal_pin_${user.id}`);
-     if (storedPin) {
-       setPin(JSON.parse(storedPin));
-       setHasVaultPin(true);
-     } else {
-       setPin(null);
-       setHasVaultPin(false);
-     }
+      const storedPin = localStorage.getItem(`journal_pin_${user.id}`);
+      if (storedPin) setPin(JSON.parse(storedPin));
 
       const storedPrivateIds = localStorage.getItem(`journal_private_entries_${user.id}`);
       if (storedPrivateIds) setPrivateEntryIds(JSON.parse(storedPrivateIds));
@@ -70,12 +63,6 @@ export const JournalProvider = ({ children }) => {
       return true;
     }
     return false;
-  };
-
-  const setVaultPin = (newPin) => {
-    setPin(newPin);
-        setHasVaultPin(true);
-        localStorage.setItem(`journal_pin_${user.id}`, JSON.stringify(newPin));
   };
 
   const togglePrivacy = (entryId) => {
@@ -163,8 +150,6 @@ export const JournalProvider = ({ children }) => {
       setActiveEntry,
       pin,
       setPin,
-      hasVaultPin,
-      setVaultPin,
       privateEntryIds,
       togglePrivacy,
       isVaultUnlocked,
